@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- Author Illham Alam -->
+<!-- Note some of the functionality was borrowed from the home page to ensure consistency with CSS & programming-->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>CSE312 - Project {{ person }} Profile</title>
+    <link rel="stylesheet" type="text/css" href="basic.css" />
+    <!-- For Javascript -->
+    <link/>
+	</head>
+  <body>
+
+	  <div id="weluser">
+			Welcome {{ User }} to {{ person }}'s personal page
+			<br />
+			<!--Button functionality to be added.-->
+			<a><button>Message</button></a>
+		</div>
+	  <div id="friends">{{ person }} Friends List</div>
+    {{ personFriends }}
+
+    <br />
+    <hr />
+
+    <table id="post">
+      <tr>
+        <th id="header">What has {{ person }} been up to lately?</th>
+      </tr>
+      {{ personPosts }}
+    </table>
+		<!-- In the format of <tr><td><b>{{ person }}</b></td><td> Post </td></tr>-->
+
+    <!-- Directly imported from the home page-->
+    <li class="vote">
+      <button class="upclick" onclick="upvote">up Vote</button>
+      <span class="currVotes">{{ votes }}</span>
+      <button class="downclick" onclick="downvote">down Vote</button>
+      <a>{{ title }}</a>
+    </li>
+
+  </body>

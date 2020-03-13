@@ -1,0 +1,55 @@
+/*@Kat
+Referencc for Fixed Menu: https://www.w3schools.com/howto/howto_css_fixed_menu.asp */
+
+body{
+  background-color: black;
+  color: white;
+}
+
+.navbar {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.navbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+#logout {
+  float: right;
+}
+
+.navbar a:hover {
+  background: #A9A9A9;
+  color: black;
+}
+
+#weluser {
+  text-align: center;
+  font-size: 36pt;
+  padding: 72px;
+
+  background-image: url("Mountain.jpeg");
+  object-fit: fill;
+}
+
+.friendList, #post, .vote {
+  text-align: left;
+  font-size: 18pt;
+
+  border-style: solid;
+  border-color: white;
+  background-color: #696969;
+  opacity: 0.50;
+
+  height: 100px;
+}

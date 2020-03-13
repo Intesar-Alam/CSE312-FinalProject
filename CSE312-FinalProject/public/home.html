@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>CSE312 - Project</title>
+		<link rel="stylesheet" type="text/css" href="basic.css" />
+		<link/>
+	</head>
+
+	<body>
+	<div id="weluser">Welcome back {{ User }}</div>
+	<div id="friends">Friends List</div>
+	{{ tempFriends }}
+
+	<br />
+	<br />
+
+	<div>
+		<label for="content">What's on your mind today ?</label>
+		<input id="content" type="text" name="contentinfo">
+	</div>
+
+	<br />
+
+	<!--Upload message or files here -->
+	<form action="/upload" method="post" enctype="multipart/form-data">
+		 <label for="form-chat">Make A post:</label>
+		 <input id="form-chat" type="text" name="message"><br/>
+		 <label for="form-file">Upload File: </label>
+		 <input id="form-file" type="file" name="upload">
+		 <br />
+		 <input type="submit" value="Submit">
+	</form>
+
+	<br />
+
+	<li class="vote">
+		<button class="upclick" onclick="upvote">up Vote</button>
+		<span class="currVotes">{{ votes }}</span>
+		<button class="downclick" onclick="downvote">down Vote</button>
+		<a>{{ title }}</a>
+	</li>
+
+	<br />
+
+	<button onclick="logout()">Logout</button>
+
+	</body>
+</html>
