@@ -1,0 +1,26 @@
+Course: 		CSE312
+Subject: 		Weekly Meeting 1
+Team Members: 	Illham Alam, Terence Li, Katherine Cheng, Kevin Wang
+
+
+Github Link:
+https://github.com/Kat324/CSE312-SocialMediaProject.git
+
+Page Name: 
+CSE312 Project
+
+Theme:
+League of Legends + FaceBook
+
+Phase 1 - Front End:
+Task: Create base html and start js for the login page
+Member: Kevin
+ 
+Task: Create base html and start js for home page
+Member: Terence
+ 
+Task: Create base html and start js for profile page
+Member: Alam
+ 
+Task: Create base css for all pages
+Member: Katherine

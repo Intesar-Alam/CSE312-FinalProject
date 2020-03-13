@@ -1,0 +1,37 @@
+Course: 		CSE312
+Subject: 		Weekly Meeting 2
+Team Members: 	Illham Alam, Terence Li, Katherine Cheng, Kevin Wang
+
+
+Github Link:
+https://github.com/IAlamOfficial/CSE312-FinalProject.git
+
+Page Name: 
+CSE312 Project
+
+Theme:
+Monochromatic
+
+Phase 1 - Front End:
+Task: Create base html and start js for the login page (COMPLETED)
+Member: Kevin
+ 
+Task: Create base html and start js for home page (COMPLETED)
+Member: Terence
+ 
+Task: Create base html and start js for profile page (COMPLETED)
+Member: Alam
+ 
+Task: Create base css for all pages (COMPLETED)
+Member: Katherine
+
+Problems:
+---> We don't understand why we should be working on Front End first, especially since the code is prone to changes and if anything
+is changed afterwards (e.g. format or simply variable names) then the whole css becomes problematic. Therefore we have not put too
+much into Front End presentation and is more likely to make Front End edits towards the end of the project.
+
+Notes:
+---> Fixed working Github Java Project in Eclipse by creating new Github Link
+---> Old Github Link (to show each member had completed their tasks) : https://github.com/Kat324/CSE312-SocialMediaProject.git
+---> Changed theme to fit our attitudes towards this semester
+---> Created base Html and Css files
