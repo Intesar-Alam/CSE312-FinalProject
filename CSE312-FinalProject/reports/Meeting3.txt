@@ -26,7 +26,7 @@ Task: TBA
 Member: TBA
 
 Problems:
----> 
+---> The fact that phase 2 never got released on time... 
 
 Notes:
----> 
+---> We will most likely try again during week 4 or whenever Hartloff decides to release it!
