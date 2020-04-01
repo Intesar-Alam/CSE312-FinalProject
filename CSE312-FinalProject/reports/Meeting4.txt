@@ -1,0 +1,32 @@
+Course: 		CSE312
+Subject: 		Weekly Meeting 4
+Team Members: 	Illham Alam, Terence Li, Katherine Cheng, Kevin Wang
+
+
+Github Link:
+https://github.com/IAlamOfficial/CSE312-FinalProject.git
+
+Page Name: 
+CSE312 Project
+
+Theme:
+Monochromatic
+
+Phase 2 - TBA:
+Task: TBA
+Member: TBA
+ 
+Task: TBA
+Member: TBA
+ 
+Task: TBA
+Member: TBA
+ 
+Task: TBA
+Member: TBA
+
+Problems:
+---> No one came to the meeting...
+
+Notes:
+---> Maybe the upcoming deadline will encourage us to come together and work on the assignment?
