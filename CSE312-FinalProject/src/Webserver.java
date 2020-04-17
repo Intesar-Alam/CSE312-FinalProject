@@ -54,7 +54,8 @@ public class Webserver {
 		        
 		        if((request.compareTo("/") == 0) || (request.compareTo("/index.html") == 0))
 			    {
-					File file = new File("CSE312-FinalProject/public/index.html"); 
+		        	String s = "public/index.html";
+					File file = new File(s);
 		 	        Scanner sc2 = new Scanner(file); 
 		 	       	String outputString = "";
 		 	        
@@ -69,7 +70,8 @@ public class Webserver {
 			    }
 		        if((request.compareTo("/basic.css") == 0))
 		        {
-		        	File file = new File("CSE312-FinalProject/public/basic.css"); 
+		        	File file = new File("public/basic.css");
+		        	
 	 	        	Scanner sc2 = new Scanner(file); 
 	 	        	String outputString = "";
 	 	        	
@@ -85,7 +87,7 @@ public class Webserver {
 		        }
 		        if((request.compareTo("/home.html") == 0))
 		        {
-		        	File file = new File("CSE312-FinalProject/public/home.html"); 
+		        	File file = new File("public/home.html"); 
 	 	        	Scanner sc2 = new Scanner(file); 
 	 	        	String outputString = "";
 	 	        	
@@ -101,7 +103,7 @@ public class Webserver {
 		        }
 		        if((request.compareTo("/profile.html") == 0))
 		        {
-		        	File file = new File("CSE312-FinalProject/public/profile.html"); 
+		        	File file = new File("public/profile.html"); 
 	 	        	Scanner sc2 = new Scanner(file); 
 	 	        	String outputString = "";
 	 	        	
@@ -117,7 +119,7 @@ public class Webserver {
 		        }
 		        if((request.compareTo("/Signup.html") == 0))
 		        {
-		        	File file = new File("CSE312-FinalProject/public/signup.html"); 
+		        	File file = new File("public/signup.html"); 
 	 	        	Scanner sc2 = new Scanner(file); 
 	 	        	String outputString = "";
 	 	        	
@@ -133,7 +135,7 @@ public class Webserver {
 		        }
 		        if((request.compareTo("/dmtemplate.html") == 0))
 		        {
-		        	File file = new File("CSE312-FinalProject/public/dmtemplate.html"); 
+		        	File file = new File("public/dmtemplate.html"); 
 	 	        	Scanner sc2 = new Scanner(file); 
 	 	        	String outputString = "";
 	 	        	
@@ -169,7 +171,7 @@ public class Webserver {
 					String actualrequest = tempstest[1];
 					System.out.println(actualrequest);
 					
-		            File image = new File("CSE312-FinalProject/public/" + actualrequest);
+		            File image = new File("public/" + actualrequest);
 					if(!image.exists())
 					{
 						ps.write("Image file name does not exist".getBytes("UTF-8"));
