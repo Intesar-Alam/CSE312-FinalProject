@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+  app:
+    build: .
+    environment:
+      JAVA_VER 8
+      AVA_HOME /usr/lib/jvm/java-8-oracle
+    ports:
+      - '8080:8000'
+    #I have no idea what im doing T-T
