@@ -1,0 +1,35 @@
+Course: 		CSE312
+Subject: 		Weekly Meeting 7
+Team Members: 	Illham Alam, Terence Li, Katherine Cheng, Kevin Wang
+
+
+Github Link:
+https://github.com/IAlamOfficial/CSE312-FinalProject.git
+
+Page Name: 
+CSE312 Project
+
+Theme:
+Monochromatic
+
+
+Phase 2 - Functionality:
+Task: A working user account without authentication
+Member: Kevin
+ 
+Task: A working live share of multimedia content between users
+Member: Terence
+ 
+Task: A working vote & comment features
+Member: Katherine
+ 
+Task: Check for Vulnerabilities & Docker-Compose
+Member: Alam
+
+Problems:
+---> Getting docker to work with Maven and JDK
+---> Implementing the data base for accounts
+---> Finding motivation in this group
+
+Notes:
+--->
