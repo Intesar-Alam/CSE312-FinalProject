@@ -47,6 +47,24 @@ public class Webserver {
 		        String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 		        String websocketkey = "";
 		        
+			 	File folder = new File("Multimedia_Content/");
+			 	 
+
+		        HashMap<String,Integer> votes = new HashMap<String,Integer>();
+		        String[] files = folder.list();
+		        for(int i = 0; i < files.length; i++)
+		        {
+		        	votes.put(files[i], 0);
+		        }
+		        
+		        ArrayList<String> filename = new ArrayList<String>();
+		 
+		        for (String filenum : files)
+		        {
+		            filename.add(filenum);
+		        }
+		        
+		        
 		        if(info.containsKey("Sec-WebSocket-Key"))
 		        {
 		        	websocketkey = info.get("Sec-WebSocket-Key");
@@ -104,18 +122,59 @@ public class Webserver {
 		        if((request.compareTo("/profile.html") == 0))
 		        {
 		        	File file = new File("public/profile.html"); 
-	 	        	Scanner sc2 = new Scanner(file); 
-	 	        	String outputString = "";
-	 	        	
-	 	        	while (sc2.hasNextLine()) 
-	 	        	{
-	 	        		String temp8 = sc2.nextLine();
-	 	        		outputString += (temp8); 
-	 	        	}
-	 	        	
-	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-	 	        	ps.write(outputString.getBytes("UTF-8"));
-	 	        	sc2.close();
+		        	Scanner sc2 = new Scanner(file);
+				 	String outputString = "";
+					while (sc2.hasNextLine()) 
+					{
+						String temp8 = sc2.nextLine();
+						if(temp8.contains("{{ personPosts }}"))
+						{
+							for(int i = 0; i < filename.size(); i++)
+							{
+								outputString += "<img src=\"" + filename.get(i) + "\" id=\"" + filename.get(i) +"\">" + "    <li class=\"vote\">\r\n" + 
+										"      <button class=\"upclick\" onclick=\"upvote" + i + "\">up Vote</button>\r\n" + 
+										"      <span class=\"currVotes\">{{ votes }}</span>\r\n" + 
+										"      <button class=\"downclick\" onclick=\"downvote" + i + "\">down Vote</button>\r\n" + 
+										"      <a>{{ title }}</a>\r\n" + 
+										"    </li>";
+							}
+						}
+						else
+							outputString += (temp8) + "\r\n"; 
+					}
+		 	        
+		 	        test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+		 	        ps.write(outputString.getBytes("UTF-8"));
+		 	        sc2.close();
+		        }
+		        for(int i = 0; i < filename.size(); i++)
+		        {
+		        	if(request.contains(filename.get(i)))
+		        	{
+			        	String tempstester[] = request.split("/");
+						String actualrequest2 = tempstester[1];
+						System.out.println(actualrequest2);
+						
+			            File image = new File("Multimedia_Content/" + actualrequest2);
+						if(!image.exists())
+						{
+							ps.write("Image file name does not exist".getBytes("UTF-8"));
+						}
+						else
+						{
+					        BufferedImage bufferimage = ImageIO.read(image);
+				            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				            ImageIO.write(bufferimage, "png", byteArrayOutputStream);
+		
+				            int size = byteArrayOutputStream.toByteArray().length;
+				            
+				            test.printStreamGoodimg(ps, size);
+				            
+				            ps.write(byteArrayOutputStream.toByteArray());
+				            
+				            ps.flush();
+						}
+		        	}
 		        }
 		        if((request.compareTo("/Signup.html") == 0))
 		        {
@@ -149,9 +208,9 @@ public class Webserver {
 	 	        	ps.write(outputString.getBytes("UTF-8"));
 	 	        	sc2.close();
 		        }
-		        if((request.compareTo("/script.js") == 0))
+		        if((request.compareTo("/script2.js") == 0))
 		        {
-		        	File file = new File("script.js"); 
+		        	File file = new File("public/script2.js"); 
 	 	        	Scanner sc2 = new Scanner(file); 
 	 	        	String outputString = "";
 	 	        	

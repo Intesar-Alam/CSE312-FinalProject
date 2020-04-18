@@ -42,11 +42,10 @@ body{
   font-size: 36pt;
   padding: 72px;
 
-  background-image: url("Mountain.jpeg");
   object-fit: fill;
 }
 
-.friendList, #post, .vote {
+.friendList, #post, .vote , img{
   text-align: left;
   font-size: 18pt;
 
