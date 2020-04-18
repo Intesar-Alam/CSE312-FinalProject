@@ -12,6 +12,7 @@ CSE312 Project
 Theme:
 Monochromatic
 
+
 Phase 2 - Functionality:
 Task: A working user account without authentication
 Member: Kevin
