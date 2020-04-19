@@ -11,14 +11,12 @@ public class ClientsInformation {
 	public void update(BufferedReader bufferedReader) throws IOException
 	{
 		String line = bufferedReader.readLine();
+		System.out.println();
+		System.out.println(line);
 		String[] requests = line.split(" ");
 		type = requests[0];
 		request = requests[1]; 
 		version = requests[2];
-
-		System.out.println(request);
-		
-		
 		
 		while(bufferedReader.ready())
 		{
@@ -31,9 +29,9 @@ public class ClientsInformation {
 			{
 				String[] test = line.split(": ");
 				Information.put(test[0], test[1]);
+				System.out.println(line);
 			}
 		}
-		
 		
 	}
 	

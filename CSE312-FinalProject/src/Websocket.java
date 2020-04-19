@@ -110,6 +110,8 @@ public class Websocket {
 			
 			String message = new String(decoded);
         	
+			int value = Integer.parseInt(message);
+			value++;
 			messages.add(message);
 			
 			sendinfo();

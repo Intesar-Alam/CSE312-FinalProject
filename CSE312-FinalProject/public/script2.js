@@ -1,12 +1,25 @@
-let socket = new WebSocket('ws://' + window.location.host + '/socket');
-socket.onmessage = renderMessages;
-
-
-function sendform() {
-	var data = document.getElementById("myText").value;
-	socket.send(data);
+function upvote(x) {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			document.getElementById("currVotes".concat(x.toString())).innerHTML =
+			this.responseText;
+		}
+	};
+	var votes = document.getElementById("currVotes".concat(x.toString())).innerHTML;
+	xhttp.open("GET", "upvote".concat(votes.toString()));
+	xhttp.send();
 }
 
-socket.addEventListener('message', function (event) {
-    console.log('Message from server ', event.data);
-});
+function downvote(x) {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			document.getElementById("currVotes".concat(x.toString())).innerHTML =
+			this.responseText;
+		}
+	};
+	var votes = document.getElementById("currVotes".concat(x.toString())).innerHTML;
+	xhttp.open("GET", "downvote".concat(votes.toString()));
+	xhttp.send();
+}
