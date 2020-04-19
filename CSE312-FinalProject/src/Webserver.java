@@ -104,6 +104,9 @@ public class Webserver {
 		 	        ps.write(outputString.getBytes("UTF-8"));
 		 	        sc2.close();
 			    }
+		        if((request.compareTo("/favicon.ico") == 0))
+		        {
+		        }
 		        if((request.compareTo("/basic.css") == 0))
 		        {
 		        	File file = new File("public/basic.css");
