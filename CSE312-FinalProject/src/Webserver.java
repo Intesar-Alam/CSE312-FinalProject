@@ -31,7 +31,6 @@ public class Webserver {
         while(true){
             try(Socket socket = server.accept())
             {
-            	System.out.println("New client connected");
 	            InputStream input = socket.getInputStream();
 	            
 	            BufferedReader sc = new BufferedReader(new InputStreamReader(input));
@@ -70,6 +69,25 @@ public class Webserver {
 		        	websocketkey = info.get("Sec-WebSocket-Key");
 		        }
 		        
+		        if((request.contains("/upvote")))
+		        {
+		        	String holder = request;
+		        	String[] tempholder = holder.split("/upvote");
+		        	int value = Integer.parseInt(tempholder[1]);
+		        	value++;
+		        	String retval = Integer.toString(value);
+		        	ps.write(retval.getBytes("UTF-8"));
+		        }
+		        if((request.contains("/downvote")))
+		        {
+		        	String holder = request;
+		        	String[] tempholder = holder.split("/downvote");
+		        	int value = Integer.parseInt(tempholder[1]);
+		        	value--;
+		        	String retval = Integer.toString(value);
+		        	ps.write(retval.getBytes("UTF-8"));
+		        }
+		        
 		        if((request.compareTo("/") == 0) || (request.compareTo("/index.html") == 0))
 			    {
 		        	String s = "public/index.html";
@@ -86,6 +104,9 @@ public class Webserver {
 		 	        ps.write(outputString.getBytes("UTF-8"));
 		 	        sc2.close();
 			    }
+		        if((request.compareTo("/favicon.ico") == 0))
+		        {
+		        }
 		        if((request.compareTo("/basic.css") == 0))
 		        {
 		        	File file = new File("public/basic.css");
@@ -131,10 +152,10 @@ public class Webserver {
 						{
 							for(int i = 0; i < filename.size(); i++)
 							{
-								outputString += "<img src=\"" + filename.get(i) + "\" id=\"" + filename.get(i) +"\">" + "    <li class=\"vote\">\r\n" + 
-										"      <button class=\"upclick\" onclick=\"upvote" + i + "\">up Vote</button>\r\n" + 
-										"      <span class=\"currVotes\">{{ votes }}</span>\r\n" + 
-										"      <button class=\"downclick\" onclick=\"downvote" + i + "\">down Vote</button>\r\n" + 
+								outputString += "<img src=\"" + filename.get(i) + "\"" + "    <li class=\"vote\">\r\n" + 
+										"      <button class=\"upclick\" onclick=\"upvote(" +  i + ")\">up Vote</button>\r\n" + 
+										"      <span id=\"currVotes" + i + "\" id=>" + votes.get(filename.get(i)) +"</span>\r\n" + 
+										"      <button class=\"downclick\" onclick=\"downvote(" + i + ")\">down Vote</button>\r\n" + 
 										"      <a>{{ title }}</a>\r\n" + 
 										"    </li>";
 							}
@@ -153,7 +174,6 @@ public class Webserver {
 		        	{
 			        	String tempstester[] = request.split("/");
 						String actualrequest2 = tempstester[1];
-						System.out.println(actualrequest2);
 						
 			            File image = new File("Multimedia_Content/" + actualrequest2);
 						if(!image.exists())
@@ -228,7 +248,6 @@ public class Webserver {
 		        {
 		        	String tempstest[] = request.split("/");
 					String actualrequest = tempstest[1];
-					System.out.println(actualrequest);
 					
 		            File image = new File("public/" + actualrequest);
 					if(!image.exists())
