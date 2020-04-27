@@ -1,0 +1,41 @@
+Course: 		CSE312
+Subject: 		Weekly Meeting 8
+Team Members: 	Illham Alam, Terence Li, Katherine Cheng, Kevin Wang
+
+
+Github Link:
+https://github.com/IAlamOfficial/CSE312-FinalProject.git
+
+Page Name: 
+CSE312 Project
+
+Theme:
+Monochromatic
+
+
+Phase 3 - A complete application *nervous laughter*:
+
+Task: User Accounts (setting up unique user accounts, with registration and login.)
+Member: 
+ 
+Task: Live sharing of multimedia content between users (Being able to submit post img/txt.)
+Member: 
+ 
+Task: A working vote & comment features (only 1 vote this time, and comments.)
+Member: 
+
+Task: Making friends/followers (unique accounts can make friends/follow with other unique accounts. Stored in the database.)
+Member:
+
+Task: DM's (Being able to send direct messages between unique users. The messages should not delete ever.)
+
+Task: Check for Vulnerabilities, Docker, & Docker-Compose
+Member: Alam
+
+Problems:
+---> Getting docker to work with Maven and JDK
+---> Implementing the data base for accounts
+---> Finding motivation in this group
+
+Notes:
+--->
