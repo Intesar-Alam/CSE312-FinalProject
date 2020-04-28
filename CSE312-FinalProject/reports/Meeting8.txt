@@ -22,7 +22,7 @@ Task: Live sharing of multimedia content between users (Being able to submit pos
 Member: 
  
 Task: A working vote & comment features (only 1 vote this time, and comments.)
-Member: 
+Member: Terence
 
 Task: Making friends/followers (unique accounts can make friends/follow with other unique accounts. Stored in the database.)
 Member:
