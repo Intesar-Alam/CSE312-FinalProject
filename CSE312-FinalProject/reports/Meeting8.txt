@@ -16,7 +16,7 @@ Monochromatic
 Phase 3 - A complete application *nervous laughter*:
 
 Task: User Accounts (setting up unique user accounts, with registration and login.)
-Member: 
+Member: Kat
  
 Task: Live sharing of multimedia content between users (Being able to submit post img/txt.)
 Member: 
