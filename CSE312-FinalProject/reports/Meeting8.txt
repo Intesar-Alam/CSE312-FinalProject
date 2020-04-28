@@ -28,6 +28,7 @@ Task: Making friends/followers (unique accounts can make friends/follow with oth
 Member:
 
 Task: DM's (Being able to send direct messages between unique users. The messages should not delete ever.)
+Member:
 
 Task: Check for Vulnerabilities, Docker, & Docker-Compose
 Member: Alam
