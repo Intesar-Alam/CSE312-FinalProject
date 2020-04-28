@@ -25,7 +25,7 @@ Task: A working vote & comment features (only 1 vote this time, and comments.)
 Member: Terence
 
 Task: Making friends/followers (unique accounts can make friends/follow with other unique accounts. Stored in the database.)
-Member:
+Member: Kevin
 
 Task: DM's (Being able to send direct messages between unique users. The messages should not delete ever.)
 Member:
