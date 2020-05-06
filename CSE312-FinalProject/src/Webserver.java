@@ -31,7 +31,7 @@ public class Webserver {
 		server = new ServerSocket(port);
         System.out.println("Running Server now on port: " + port);
         List<Socket> clients = new ArrayList<>();
-		MongoClient mongo = MongoClients.create("mongodb://localhost:27017");
+		MongoClient mongo = MongoClients.create("mongodb://mongo:27017");
         
         
         while(true){

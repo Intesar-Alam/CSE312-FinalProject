@@ -1,10 +1,11 @@
 version: '3.3'
 services:
+  mongo:
+    image: mongo
   app:
     build: .
     environment:
-      JAVA_VER 8
-      AVA_HOME /usr/lib/jvm/java-8-oracle
+      WAIT_HOSTS: mongo:27017 
     ports:
       - '8080:8000'
-    #I have no idea what im doing T-T
+    
