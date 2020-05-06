@@ -17,7 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import java.io.FileReader;
 import javax.imageio.ImageIO;
+
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoClient;
 
 public class Webserver {
 	private static ServerSocket server;
@@ -27,6 +31,8 @@ public class Webserver {
 		server = new ServerSocket(port);
         System.out.println("Running Server now on port: " + port);
         List<Socket> clients = new ArrayList<>();
+		MongoClient mongo = MongoClients.create("mongodb://localhost:27017");
+        
         
         while(true){
             try(Socket socket = server.accept())
