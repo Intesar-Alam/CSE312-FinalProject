@@ -34,6 +34,6 @@ RUN chmod +x /wait
 # Run the app
 # RUN javac -verbose src/Webserver.java
 # CMD /wait && java src/Webserver
-CMD /wait && java -jar dockertest.jar 
+ CMD /wait && java -jar dockertest.jar 
 
 #https://runnable.com/docker/java/dockerize-your-java-application
