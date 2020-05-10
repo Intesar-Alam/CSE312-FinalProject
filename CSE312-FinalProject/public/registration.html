@@ -2,23 +2,34 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Registrating User</title>
+    <title>CSE312 Social Media - Sign Up</title>
+    <style>
+  	body {
+  		background-image: url("Road.jpeg");
+  	}
+  	</style>
+  	<link rel="stylesheet" type = "text/css" href="basic.css"/>
   </head>
   <body>
-    <form  action="/registration" method="post" enctype="multipart/form-data">
+    
+    <div id="formboxreg"><form  action="/registration" method="post" enctype="multipart/form-data">
       <label for="username">Username:</label><br>
       <input type="text" placeholder="Enter Username" name="username"><br>
       <label for="password">Password:</label><br>
       <input type="password" placeholder="Enter Password" name="password"><br>
-      <p>Your password must have: </p>
+      
+      <br>
+      <input type="submit" value="Submit">
+      <br>
+      
+      <div id="req"><p>Your password must have: </p>
       <ul>
         <li>A minimum length of 8 characters</li>
         <li>Uppercase and lowercase letter</li>
         <li>A numerical character</li>
         <li>A special character</li>
-      </ul>
-      <br>
-      <input type="submit" value="Submit">
-    </form>
+      </ul></div>
+    </form></div>
+  
   </body>
 </html>

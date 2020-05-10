@@ -3,12 +3,18 @@
 
 <head>
 	<meta charset = "UTF-8">
-  	<title> CSE 312 Social Media </title>
+  	<title>CSE 312 Social Media - Login</title>
+  	<style>
+  	body {
+  		background-image: url("Road.jpeg");
+  	}
+  	</style>
   	<link rel="stylesheet" type = "text/css" href="basic.css"/>
 </head>
 
 <body>
-  	<form  action="/login" method="post" enctype="multipart/form-data">
+
+	<div id="formboxidx"><form action="/login" method="post" enctype="multipart/form-data">
       <label for="username">Username:</label><br>
       <input type="text" placeholder="Enter Username" name="username"><br>
       <label for="password">Password:</label><br>
@@ -17,16 +23,15 @@
     </form>
 
 	<p>If you do not have an account, click the button below.</p>
-    <button><a href="registration.html">Create an Account</a></button>
+    <button><a href="registration.html">Create an Account</a></button></div>
 
-	<p> Preview for those without accounts: </p>
+	<div class="extra"><p> Preview for those without accounts: </p>
 	
 	<p> 
 		To visit the home page click on this link: <a href="home.html"> Home Page </a> </br>
 	    To visit the profile page click on this link: <a href="profile.html"> Profile Page </a> </br>	
 	    To visit the DM (Direct Message) page click on this link: <a href="dmtemplate.html"> DM Page </a> 
-	</p>	
-
+	</p></div>
 
 </body>
 

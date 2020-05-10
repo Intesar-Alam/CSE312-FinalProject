@@ -46,7 +46,6 @@ public class Webserver {
 		        
 		        Authenticate authenticate = new Authenticate(sc);
 		        ArrayList<String> userData = authenticate.getUserData();
-		        System.out.println("Authenticate read");
 		        
 		        PrintStream ps = new PrintStream(socket.getOutputStream());
 		        OutPrintStream test = new OutPrintStream();
@@ -223,9 +222,6 @@ public class Webserver {
 		        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
 		 	        ps.write(outputString.getBytes("UTF-8"));
 				}
-//		        if((request.compareTo("/favicon.ico") == 0))
-//		        {
-//		        }
 		        if((request.compareTo("/basic.css") == 0))
 		        {
 		        	File file = new File("public/basic.css");
@@ -315,22 +311,6 @@ public class Webserver {
 						}
 		        	}
 		        }
-//		        if((request.compareTo("/Signup.html") == 0))
-//		        {
-//		        	File file = new File("public/signup.html"); 
-//	 	        	Scanner sc2 = new Scanner(file); 
-//	 	        	String outputString = "";
-//	 	        	
-//	 	        	while (sc2.hasNextLine()) 
-//	 	        	{
-//	 	        		String temp8 = sc2.nextLine();
-//	 	        		outputString += (temp8); 
-//	 	        	}
-//	 	        	
-//	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-//	 	        	ps.write(outputString.getBytes("UTF-8"));
-//	 	        	sc2.close();
-//		        }
 		        if((request.compareTo("/dmtemplate.html") == 0))
 		        {
 		        	File file = new File("public/dmtemplate.html"); 

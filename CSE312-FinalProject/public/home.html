@@ -2,14 +2,23 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>CSE312 - Project</title>
+		<title>CSE312 Social Media - Home</title>
 		<link rel="stylesheet" type="text/css" href="basic.css" />
-		<script src = "script2.js"></script>
-		
+		<script src = "script2.js"></script>		
 	</head>
 
 	<body>
-	<div id="weluser">Welcome back {{ User }}</div>
+	
+	<div class="navbar">
+  		<a href="home.html">Home</a>
+  		<a href="profile.html">Profile</a>
+  		<a href="friends.html">Friends</a>
+  		<div class="navright">
+  			<a href="index.html">Logout</a>
+  		</div>
+	</div>
+	
+	<div class="weluser">Welcome back {{ User }}</div>
 	<div id="friends">Friends List</div>
 	{{ tempFriends }}
 
