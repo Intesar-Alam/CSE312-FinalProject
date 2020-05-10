@@ -23,12 +23,6 @@
 	{{ tempFriends }}
 
 	<br />
-	<br />
-
-	<div>
-		<label for="content">What's on your mind today ?</label>
-		<input id="content" type="text" name="contentinfo">
-	</div>
 
 	<br />
 
@@ -42,6 +36,12 @@
 		 <input type="submit" value="Submit">
 	</form>
 
+	<form enctype="multipart/form-data" id="myForm" onsubmit="sendMessageWithForm();return false;">
+        <label for = "form-chat">Chat: </label>
+        <input id = "form-chat" type = "text" name = "message"><br/>
+        <input id = "activate" type = "submit" value ="Submit">
+     </form>
+      
 	<br />
 
 	<li class="vote">

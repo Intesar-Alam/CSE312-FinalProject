@@ -32,7 +32,7 @@ public class Webserver {
         System.out.println("Running Server now on port: " + port);
         List<Socket> clients = new ArrayList<>();
 
-		MongoClient mongo = MongoClients.create("mongodb://mongo:27017");
+//		MongoClient mongo = MongoClients.create("mongodb://mongo:27017");
 //		MongoClient mongo = MongoClients.create("mongodb://localhost:27017");
 
         
@@ -286,6 +286,13 @@ public class Webserver {
 		 	        ps.write(outputString.getBytes("UTF-8"));
 		 	        sc2.close();
 		        }
+		        if(request.compareTo("/addStatus") == 0){
+		        	
+		        }
+		        if(request.compareTo("/statusUpdate") == 0) {
+		        	
+		        }
+		        
 		        for(int i = 0; i < filename.size(); i++)
 		        {
 		        	if(request.contains(filename.get(i)))

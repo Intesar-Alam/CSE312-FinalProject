@@ -1,5 +1,5 @@
 Course: 		CSE312
-Subject: 		Weekly Meeting 9
+Subject: 		Weekly Meeting 10
 Team Members: 	Illham Alam, Terence Li, Katherine Cheng, Kevin Wang
 
 
@@ -19,7 +19,7 @@ Task: User Accounts (setting up unique user accounts, with registration and logi
 Member: Kat
  
 Task: Live sharing of multimedia content between users (Being able to submit post img/txt.)
-Member:
+Member: Alam
  
 Task: A working vote & comment features (only 1 vote this time, and comments.)
 Member: Terence
@@ -34,10 +34,8 @@ Task: Check for Vulnerabilities, Docker, & Docker-Compose
 Member: Alam
 
 Problems:
----> Getting docker to work with Maven and JDK
----> Implementing the data base for accounts
----> Finding motivation in this group
----> We neglected our CSE 305 project while working on this. We're giving that project some love rn. Well be back next week.
+---> Making authentication broke the code were in the process of fixing it atm
+---> We can't get the data base set up to store post or accounts
 
 Notes:
----> Hopefully Nick and I can get docker working
+---> 

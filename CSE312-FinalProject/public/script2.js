@@ -23,3 +23,33 @@ function downvote(x) {
     xhttp.open("GET", "downvote".concat(votes.toString()));
     xhttp.send();
 }
+
+function sendMessageWithForm() {
+	const formElement = document.getElementById("myForm");
+ 	const formData = new FormData(formElement);
+ 	const request = new XMLHttpRequest();
+ 	var cht = document.getElementById("body");
+ 	
+ 	request.onreadystatechange =	function(){
+   	if(this.readyState	===	4	&&	this.status	===	200){
+     	console.log(this.response);
+    	 cht.innerHTML = this.response;
+  	}
+ 	};
+ 	
+ 	request.open("POST", "send-message-form");
+ 	request.send(formData);
+}
+
+function getMessages(){
+  	var	request	=	new	XMLHttpRequest();
+  	var itm = document.getElementById("body");
+  	request.onreadystatechange =	function(){
+    if(this.readyState	===	4	&&	this.status	===	200){
+      	console.log(this.response);
+      	itm.innerHTML = this.response;
+  		}
+  	};
+  	request.open("GET",	"/chat");
+  	request.send();
+}
