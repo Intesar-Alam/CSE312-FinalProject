@@ -1,11 +1,49 @@
-/*@Kat
-Referencc for Fixed Menu: https://www.w3schools.com/howto/howto_css_fixed_menu.asp */
+/*Reference for Fixed Menu: https://www.w3schools.com/howto/howto_css_fixed_menu.asp */
+/*Reference for Image Gallery: https://www.w3schools.com/css/css_image_gallery.asp */
 
-body{
+/*Applies to every page*/
+body {
   background-color: black;
   color: white;
 }
 
+a:link, a:visited {
+  text-decoration: none;
+  color: black;
+}
+
+/*Applies to index.html page*/
+#formboxidx {
+  box-sizing: content-box;
+  background-color: gray;
+  width: 360px;
+  height: 190px;
+  padding: 30px;
+  border: double;
+  text-align: center;
+  margin-top: 15%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#formboxreg {
+  box-sizing: content-box;
+  background-color: gray;
+  width: 360px;
+  height: 240px;
+  padding: 30px;
+  border: double;
+  text-align: center;
+  margin-top: 13%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#req {
+	text-align: left;
+}
+
+/*Applies to home.html, profile.html page*/
 .navbar {
   overflow: hidden;
   background-color: #333;
@@ -24,28 +62,27 @@ body{
   font-size: 15px;
 }
 
-#logout {
-  float: right;
-}
-
-#profile {
-  float: right;
-}
-
 .navbar a:hover {
   background: #A9A9A9;
   color: black;
 }
 
-#weluser {
+.navright {
+  float: right;
+}
+
+#logout {
+  float: right;
+}
+
+.weluser {
+  border: double;
   text-align: center;
   font-size: 36pt;
   padding: 72px;
-
-  object-fit: fill;
 }
 
-.friendList, #post, .vote , img{
+.friendList, #post, .vote , img {
   text-align: left;
   font-size: 18pt;
 
@@ -55,4 +92,9 @@ body{
   opacity: 0.50;
 
   height: 100px;
+}
+
+/*Will remove this after project is submitted*/
+.extra {
+	margin-top: 5%;
 }

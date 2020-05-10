@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>CSE312 Social Media - Message {{friend}}</title>
+    <link rel="stylesheet" type="text/css" href="basic.css" />
+    <script src = "script2.js"></script>
+  </head>
+  <body>
+	
+	<div class="navbar">
+  		<a href="home.html">Home</a>
+  		<a href="profile.html">Profile</a>
+  		<a href="friends.html">Friends</a>
+  		<div class="navright">
+  			<a href="index.html">Logout</a>
+  		</div>
+	</div>
+	
+	<div class="weluser"><p>Messages</p><br></div>
+	
+	<p id="messageHistory"></p><br>
+	
+	<form action="/message" method="post" enctype="multipart/form-data">
+		 <label for="form-chat">Make Type:</label>
+		 <input id="form-chat" type="text" name="message"><br/>
+		 <br />
+		 <input type="submit" value="Send">
+	</form>
+	
+  </body>
+</html>

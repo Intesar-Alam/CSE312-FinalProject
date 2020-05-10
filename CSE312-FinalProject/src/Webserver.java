@@ -31,8 +31,12 @@ public class Webserver {
 		server = new ServerSocket(port);
         System.out.println("Running Server now on port: " + port);
         List<Socket> clients = new ArrayList<>();
+
 		MongoClient mongo = MongoClients.create("mongodb://mongo:27017");
         
+
+//		MongoClient mongo = MongoClients.create("mongodb://localhost:27017");
+
         
         while(true){
             try(Socket socket = server.accept())
@@ -44,6 +48,9 @@ public class Webserver {
 		        ClientsInformation temp = new ClientsInformation();
 		        temp.update(sc);
 		        String request = temp.getRequest();
+		        
+		        Authenticate authenticate = new Authenticate(sc);
+		        ArrayList<String> userData = authenticate.getUserData();
 		        
 		        PrintStream ps = new PrintStream(socket.getOutputStream());
 		        OutPrintStream test = new OutPrintStream();
@@ -110,9 +117,116 @@ public class Webserver {
 		 	        ps.write(outputString.getBytes("UTF-8"));
 		 	        sc2.close();
 			    }
-		        if((request.compareTo("/favicon.ico") == 0))
+		        if((request.compareTo("/login") == 0))
 		        {
+		        	String r = "";
+		        	String outputString = "";
+		        	
+		        	if(userData.isEmpty() || userData.size() != 2) {
+						r = "You must enter both fields. Please try again.";
+						outputString += "HTTP/1.1 200 OK\r\n";
+						outputString += "Content-Type: text/plain\r\n";
+						outputString += "Content-Length: " + r.length();
+						outputString += "\r\n\r\n" + r;
+					}
+		        	else {
+						if(authenticate.doesUserExist(userData.get(0), "public/accountinfo.csv")) {
+							if(authenticate.isPasswordCorrect(userData.get(1), "public/accountinfo.csv")) {
+								outputString += "HTTP/1.1 301 MOVED PERMANENTLY\r\n";
+								outputString += "Content-Type: text/html\r\n";
+								outputString += "Location: /index.html";
+								outputString += "\r\n\r\n";
+							}
+							else {
+								r = "This password is incorrect. Please try again.";
+								outputString += "HTTP/1.1 200 OK\r\n";
+								outputString += "Content-Type: text/plain\r\n";
+								outputString += "Content-Length: " + r.length();
+								outputString += "\r\n\r\n" + r;
+							}
+						}
+						else {
+							r = "This username does not exist. Please try again.";
+							outputString += "HTTP/1.1 200 OK\r\n";
+							outputString += "Content-Type: text/plain\r\n";
+							outputString += "Content-Length: " + r.length();
+							outputString += "\r\n\r\n" + r;
+						}
+					}
+		        	
+		        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+		 	        ps.write(outputString.getBytes("UTF-8"));
 		        }
+		        if((request.compareTo("/registration.html") == 0)) {
+		        	String s = "public/registration.html";
+					File file = new File(s);
+		 	        Scanner sc2 = new Scanner(file); 
+		 	       	String outputString = "";
+		 	        
+		 	        while (sc2.hasNextLine()) 
+		 	        {
+		 	        	String temp8 = sc2.nextLine();
+		 	        	outputString += (temp8); 
+		 	        }
+		 	        test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+		 	        ps.write(outputString.getBytes("UTF-8"));
+		 	        sc2.close();
+				}
+		        if((request.compareTo("/registration") == 0)) {
+		        	String r = "";
+		        	String outputString = "";
+		        	
+		        	if(userData.isEmpty() || userData.size() != 2) {
+						r = "You must enter both fields. Please try again.";
+						outputString += "HTTP/1.1 200 OK\r\n";
+						outputString += "Content-Type: text/plain\r\n";
+						outputString += "Content-Length: " + r.length();
+						outputString += "\r\n\r\n" + r;
+					}
+		        	else {
+		        		if(authenticate.isUsernameValid(userData.get(0), "public/accountinfo.csv")) {
+							if(authenticate.isPasswordValid(userData.get(1))) {
+								byte[] salt = authenticate.getSalt();
+//								byte[] token = authenticate.getToken("public/accountinfo.csv");
+								String newPassword = authenticate.getSecurePassword(userData.get(1), salt);
+								userData.set(1, newPassword);
+								userData.add(Base64.getEncoder().encodeToString(salt));
+//								userData.add(Base64.getEncoder().encodeToString(token));
+								authenticate.toData("public/accountinfo.csv", userData);
+								
+								outputString += "HTTP/1.1 301 MOVED PERMANENTLY\r\n";
+								outputString += "Content-Type: text/html\r\n";
+								outputString += "Location: /index.html";
+								outputString += "\r\n\r\n";
+							}
+							else {
+								r = "";
+								ArrayList<String> t = authenticate.getReqNotMet();
+								for(int i = 0; i < t.size(); i++) {
+									r = r + t.get(i) + "\r\n";
+								}
+								outputString += "HTTP/1.1 200 OK\r\n";
+								outputString += "Content-Type: text/plain\r\n";
+								outputString += "Content-Length: " + r.length();
+								outputString += "\r\n\r\n" + r;
+							}
+						}
+		        		else {
+		        			r = "";
+							ArrayList<String> t = authenticate.getReqNotMet();
+							for(int i = 0; i < t.size(); i++) {
+								r = r + t.get(i) + "\r\n";
+							}
+							outputString += "HTTP/1.1 200 OK\r\n";
+							outputString += "Content-Type: text/plain\r\n";
+							outputString += "Content-Length: " + r.length();
+							outputString += "\r\n\r\n" + r;
+						}
+		        	}
+		        	
+		        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+		 	        ps.write(outputString.getBytes("UTF-8"));
+				}
 		        if((request.compareTo("/basic.css") == 0))
 		        {
 		        	File file = new File("public/basic.css");
@@ -201,22 +315,6 @@ public class Webserver {
 				            ps.flush();
 						}
 		        	}
-		        }
-		        if((request.compareTo("/Signup.html") == 0))
-		        {
-		        	File file = new File("public/signup.html"); 
-	 	        	Scanner sc2 = new Scanner(file); 
-	 	        	String outputString = "";
-	 	        	
-	 	        	while (sc2.hasNextLine()) 
-	 	        	{
-	 	        		String temp8 = sc2.nextLine();
-	 	        		outputString += (temp8); 
-	 	        	}
-	 	        	
-	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-	 	        	ps.write(outputString.getBytes("UTF-8"));
-	 	        	sc2.close();
 		        }
 		        if((request.compareTo("/dmtemplate.html") == 0))
 		        {
