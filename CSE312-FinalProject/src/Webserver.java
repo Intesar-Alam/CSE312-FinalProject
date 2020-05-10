@@ -29,13 +29,14 @@ import com.mongodb.client.MongoClient;
 public class Webserver {
 	private static ServerSocket server;
 	private static int port = 8000;
-	private static ArrayList<String> publicPosts;
+	//Change type to StatusUpdate in the future when it starts working
+	private static ArrayList<StatusUpdate> publicPosts;
 	
 	public static void main(String args[]) throws IOException, NoSuchAlgorithmException {
 		server = new ServerSocket(port);
         System.out.println("Running Server now on port: " + port);
         List<Socket> clients = new ArrayList<>();
-        publicPosts = new ArrayList<String>();
+        publicPosts = new ArrayList<StatusUpdate>();
 //      Uncomment line below to test docker compose
 //		MongoClient mongo = MongoClients.create("mongodb://mongo:27017");
 //		MongoClient mongo = MongoClients.create("mongodb://localhost:27017");
@@ -294,19 +295,28 @@ public class Webserver {
 		        
 		        /*
 		         * For the multimedia makes public post
+		         * 
+		         * TODO add to document when post command is working 
 		         */
 		        if(request.compareTo("/addStatus") == 0){
-		        	String idx = "public/posts.txt";
+
+		        /** TODO make sure data is added **/
+		        	String idx = "publicFiles/info.txt";
 					String fileData = readTextData(idx);
-		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n";
-					outputString += "Content-Length: " + (fileData.length()) +"\r\n\r\n" + fileData;
+		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n\r\n";
+		        	outputString = "Content-Length: " + fileData.length() + "\r\n\r\n" + fileData;
+					ps.write(outputString.getBytes("UTF-8"));
 		        }
 		        
 		        /*
 		         * To request all posts
 		         */
 		        if(request.compareTo("/statusUpdate") == 0) {
-		        	
+		        	String idx = "public/posts.txt";
+					String fileData = readTextData(idx);
+		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n";
+					outputString += "Content-Length: " + (fileData.length()) +"\r\n\r\n" + fileData;
+					ps.write(outputString.getBytes("UTF-8"));
 		        }
 		        
 		        for(int i = 0; i < filename.size(); i++)
@@ -432,13 +442,17 @@ public class Webserver {
 		//Creates a new BufferedReader which consists of a FileReader with the File which contains the index of the file;
 		BufferedReader fileReader = new BufferedReader(new FileReader(new File(index)));
 		String fileData = "";
-		String temp = "";
+		String displayTxt = "";
+		String rawTxt = "";
 		//Reads each line of the file and adds it to fileData
-		while((temp = fileReader.readLine())!= null) {
-			temp = temp.replace("&", "&amp");
-			temp = temp.replace("<", "&lt");
-			temp = temp.replace(">", "&gt");
-			fileData += temp + "<br />" + 
+		while((rawTxt = fileReader.readLine())!= null) {
+			String[] rawPost = rawTxt.split(",");
+			StatusUpdate prepPost = new StatusUpdate(rawPost[0],rawPost[1],rawPost[2]); 
+			displayTxt = prepPost.getPost();
+			displayTxt = displayTxt.replace("&", "&amp");
+			displayTxt = displayTxt.replace("<", "&lt");
+			displayTxt = displayTxt.replace(">", "&gt");
+			fileData += displayTxt + "<br />" + 
 					"<div class=\"vote\">\r\n" + 
 					"	<button class=\"upclick\" onclick=\"upvote\">up Vote</button>\r\n" + 
 					"	<span class=\"currVotes\">{{ votes }}</span>\r\n" + 
@@ -451,16 +465,19 @@ public class Webserver {
 		return fileData;
 	}
 	/**
+	 * From Alam HW 5
 	 * Method takes a string and adds it into a new document as a new line.
 	 * @param String to be added to the document?
 	 * @param The file that the string is being added to 
 	 * @throws IOException 
 	 */
 	private static void addToDocument(String string, File txtFile) throws IOException {
-		publicPosts.add(string);
+		StatusUpdate post = new StatusUpdate(string);
+		publicPosts.add(post);
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(txtFile));
-		for(String s : publicPosts) {
-			bufferedWriter.write(s);
+		for(StatusUpdate s : publicPosts) {
+			String str = s.getCSV();
+			bufferedWriter.write(str);
 			bufferedWriter.newLine();
 		}
 		bufferedWriter.close();
@@ -468,6 +485,7 @@ public class Webserver {
 	}
 	
 	/**
+	 * From Alam HW 5
 	 * Method takes an array and adds it into a new document each item in the array is it's own line.
 	 * @param Array to be added to the document?
 	 * @param The file that the array is being added to 
