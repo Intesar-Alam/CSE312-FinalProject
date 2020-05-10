@@ -1,4 +1,5 @@
 /*Reference for Fixed Menu: https://www.w3schools.com/howto/howto_css_fixed_menu.asp */
+/*Reference for Image Gallery: https://www.w3schools.com/css/css_image_gallery.asp */
 
 /*Applies to every page*/
 body {
@@ -79,10 +80,6 @@ a:link, a:visited {
   text-align: center;
   font-size: 36pt;
   padding: 72px;
-}
-
-#profile {
-  float: right;
 }
 
 .friendList, #post, .vote , img {
