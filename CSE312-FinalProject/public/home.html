@@ -4,10 +4,29 @@
 		<meta charset="UTF-8">
 		<title>CSE312 Social Media - Home</title>
 		<link rel="stylesheet" type="text/css" href="basic.css" />
-		<script src = "script2.js"></script>		
+		<script src = "script2.js"></script>
+		<script>
+		
+		function chathis(){
+			setInterval(getMessages, 5000);
+		}
+		
+		function getMessages(){
+		  	var	request	= new XMLHttpRequest();
+		  	var itm = document.getElementById("bdy");
+		  	request.onreadystatechange = function(){
+		    if(this.readyState	===	4	&&	this.status	===	200){
+		      	console.log(this.response);
+		      	itm.innerHTML = this.response;
+		  		}
+		  	};
+		  	request.open("GET",	"/chat");
+		  	request.send();
+		}
+		</script>		
 	</head>
 
-	<body>
+	<body onload = "chathis();">
 	
 	<div class="navbar">
   		<a href="home.html">Home</a>
@@ -26,6 +45,7 @@
 
 	<br />
 
+	<!--
 	<!--Upload message or files here -->
 	<form action="/upload" method="post" enctype="multipart/form-data">
 		 <label for="form-chat">Make A post:</label>
@@ -35,6 +55,7 @@
 		 <br />
 		 <input type="submit" value="Submit">
 	</form>
+	-->
 
 	<form enctype="multipart/form-data" id="myForm" onsubmit="sendMessageWithForm();return false;">
         <label for = "form-chat">Chat: </label>
@@ -43,13 +64,17 @@
      </form>
       
 	<br />
-
+	
+	<div id="bdy"></div>
+	
+	<!--
 	<li class="vote">
 		<button class="upclick" onclick="upvote">up Vote</button>
 		<span class="currVotes">{{ votes }}</span>
 		<button class="downclick" onclick="downvote">down Vote</button>
 		<a>{{ title }}</a>
 	</li>
+    -->
 
 	<br />
 

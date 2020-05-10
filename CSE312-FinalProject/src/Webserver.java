@@ -1,5 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import java.io.FileReader;
+import java.io.FileWriter;
+
 import javax.imageio.ImageIO;
 
 import com.mongodb.client.MongoClients;
@@ -26,12 +29,14 @@ import com.mongodb.client.MongoClient;
 public class Webserver {
 	private static ServerSocket server;
 	private static int port = 8000;
+	private static ArrayList<String> publicPosts;
 	
 	public static void main(String args[]) throws IOException, NoSuchAlgorithmException {
 		server = new ServerSocket(port);
         System.out.println("Running Server now on port: " + port);
         List<Socket> clients = new ArrayList<>();
-
+        publicPosts = new ArrayList<String>();
+//      Uncomment line below to test docker compose
 //		MongoClient mongo = MongoClients.create("mongodb://mongo:27017");
 //		MongoClient mongo = MongoClients.create("mongodb://localhost:27017");
 
@@ -286,9 +291,20 @@ public class Webserver {
 		 	        ps.write(outputString.getBytes("UTF-8"));
 		 	        sc2.close();
 		        }
+		        
+		        /*
+		         * For the multimedia makes public post
+		         */
 		        if(request.compareTo("/addStatus") == 0){
-		        	
+		        	String idx = "public/posts.txt";
+					String fileData = readTextData(idx);
+		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n";
+					outputString += "Content-Length: " + (fileData.length()) +"\r\n\r\n" + fileData;
 		        }
+		        
+		        /*
+		         * To request all posts
+		         */
 		        if(request.compareTo("/statusUpdate") == 0) {
 		        	
 		        }
@@ -405,5 +421,66 @@ public class Webserver {
         }
 	}
 
+	/**
+	 * From Alam HW5
+	 * Reads the .txt Files and puts it into a string. Line by line
+	 * @param Name of the files that needs to be converted as a String.
+	 * @return Converted file as a string.
+	 * @throws IOException
+	 */
+	private static String readTextData(String index) throws IOException {
+		//Creates a new BufferedReader which consists of a FileReader with the File which contains the index of the file;
+		BufferedReader fileReader = new BufferedReader(new FileReader(new File(index)));
+		String fileData = "";
+		String temp = "";
+		//Reads each line of the file and adds it to fileData
+		while((temp = fileReader.readLine())!= null) {
+			temp = temp.replace("&", "&amp");
+			temp = temp.replace("<", "&lt");
+			temp = temp.replace(">", "&gt");
+			fileData += temp + "<br />" + 
+					"<div class=\"vote\">\r\n" + 
+					"	<button class=\"upclick\" onclick=\"upvote\">up Vote</button>\r\n" + 
+					"	<span class=\"currVotes\">{{ votes }}</span>\r\n" + 
+					"	<button class=\"downclick\" onclick=\"downvote\">down Vote</button>\r\n" + 
+					"	<a>{{ title }}</a>\r\n" + 
+					"</div>";
+			
+		}
+		fileReader.close();
+		return fileData;
+	}
+	/**
+	 * Method takes a string and adds it into a new document as a new line.
+	 * @param String to be added to the document?
+	 * @param The file that the string is being added to 
+	 * @throws IOException 
+	 */
+	private static void addToDocument(String string, File txtFile) throws IOException {
+		publicPosts.add(string);
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(txtFile));
+		for(String s : publicPosts) {
+			bufferedWriter.write(s);
+			bufferedWriter.newLine();
+		}
+		bufferedWriter.close();
+		
+	}
+	
+	/**
+	 * Method takes an array and adds it into a new document each item in the array is it's own line.
+	 * @param Array to be added to the document?
+	 * @param The file that the array is being added to 
+	 * @throws IOException 
+	 */
+	private static void addToDocument(ArrayList<String> stringList, File txtFile) {
+		for (String string: stringList) {
+			try {
+				addToDocument(string, txtFile);
+			} catch (IOException e) {
+				System.out.println("Could not write " + string + " to the history");
+			}
+		}
+	}
 	
 }
