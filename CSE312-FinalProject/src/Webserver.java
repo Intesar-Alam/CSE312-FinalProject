@@ -337,6 +337,34 @@ public class Webserver {
 						}
 		        	}
 		        }
+		        if((request.compareTo("friends.html") == 0)) {
+		        	File csvfile = new File("public/accountinfo.csv");
+		        	Scanner scan = new Scanner(csvfile);
+		        	String usernames = "These are our other users </br>";
+		        	
+		        	while (scan.hasNextLine()) {
+		        		String accountinfo = scan.nextLine();
+		        		String [] ainfo = accountinfo.split(",");
+		        		usernames = usernames + ainfo[0] + "</br>";
+		        	}
+		        	
+		        	File file = new File("public/friends.html"); 
+	 	        	Scanner sc2 = new Scanner(file); 
+	 	        	String outputString = "";
+	 	        	
+	 	        	while (sc2.hasNextLine()) 
+	 	        	{
+	 	        		String temp8 = sc2.nextLine();
+	 	        		if (temp8.contains("{{ add friends }}")) {
+	 	        			temp8.replace("{{ add friends }}", usernames);
+	 	        		}
+	 	        		outputString += (temp8); 
+	 	        	}
+	 	        	
+	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+	 	        	ps.write(outputString.getBytes("UTF-8"));
+	 	        	sc2.close();
+		        }
 		        if((request.compareTo("/dmtemplate.html") == 0))
 		        {
 		        	File file = new File("public/dmtemplate.html"); 
