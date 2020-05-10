@@ -2,27 +2,22 @@
 <html lang = "en">
 
 <head>
-  <meta charset = "UTF-8">
-  <title> CSE 312 Social Media </title>
-  <link rel="stylesheet" type = "text/css" href="basic.css"/>
-  <!-- <script src = "script.js"></script> -->
-
+	<meta charset = "UTF-8">
+  	<title> CSE 312 Social Media </title>
+  	<link rel="stylesheet" type = "text/css" href="basic.css"/>
 </head>
 
 <body>
-  <form action="/login" method="get" enctype="multipart/form-data">
+  	<form  action="/login" method="post" enctype="multipart/form-data">
+      <label for="username">Username:</label><br>
+      <input type="text" placeholder="Enter Username" name="username"><br>
+      <label for="password">Password:</label><br>
+      <input type="password" placeholder="Enter Password" name="password"><br><br>
+      <input type="submit" name="Enter" value="Submit">
+    </form>
 
-   <label for="Username"> Username: </label>
-   <input id="Username" type="text" name="Username"><br/>
-
-   <label for="Password"> Password: </label>
-   <input id="Password" type="text" name="Password"><br/>
-
-   <input type="submit" href = "Home.html" value="Log in">
-
-  </form>
-
-<a href="Signup.html"> Sign Up </a>
+	<p>If you do not have an account, click the button below.</p>
+    <button><a href="registration.html">Create an Account</a></button>
 
 	<p> Preview for those without accounts: </p>
 	

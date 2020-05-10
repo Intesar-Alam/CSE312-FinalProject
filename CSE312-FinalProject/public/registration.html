@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Registrating User</title>
+  </head>
+  <body>
+    <form  action="/registration" method="post" enctype="multipart/form-data">
+      <label for="username">Username:</label><br>
+      <input type="text" placeholder="Enter Username" name="username"><br>
+      <label for="password">Password:</label><br>
+      <input type="password" placeholder="Enter Password" name="password"><br>
+      <p>Your password must have: </p>
+      <ul>
+        <li>A minimum length of 8 characters</li>
+        <li>Uppercase and lowercase letter</li>
+        <li>A numerical character</li>
+        <li>A special character</li>
+      </ul>
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>
