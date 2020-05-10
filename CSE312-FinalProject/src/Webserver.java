@@ -33,8 +33,6 @@ public class Webserver {
         List<Socket> clients = new ArrayList<>();
 
 		MongoClient mongo = MongoClients.create("mongodb://mongo:27017");
-        
-
 //		MongoClient mongo = MongoClients.create("mongodb://localhost:27017");
 
         
