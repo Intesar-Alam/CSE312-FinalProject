@@ -14,6 +14,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -27,17 +28,79 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 
 public class Webserver {
+	
+	//Global Variables for server set up
 	private static ServerSocket server;
-	private static int port = 8000;
+	private static int port = 8000; //Port the server is running on.
+	private static String input = ""; //Holds any data received from the client.
+	private static String output = ""; //Holds any data to be sent to the client.
+	private static Date timestamp; //Adds a time stamp to aid in debugging. (Please create a new date on each use.)
+	
+	//Global Variable for server operation
+	private static InputStream inStream;
+	private static BufferedReader breader; 
+	private static Scanner scaner;
+	private static PrintStream stream;
+	private static Response response;
+	private static byte [] rawImage;
+	
+	//Global File Reference List
+	private static HashMap<String, String> webList; 
+	private static HashMap<String, String> movedList; 
+	private static ArrayList<String> imageList;
+	private static ArrayList<String> formList;//HW4 Objective 1
+	private static File csvData = new File("src/logindat.csv");
+	
+	//Storing the userdata
+	private static HashMap<String, String> userpass;
+	private static HashMap<String, String> usersalt;
+	private static HashMap<String, String> usertoke;
+	private static HashMap<String, Boolean> userexit;
+	
 	//Change type to StatusUpdate in the future when it starts working
 	private static ArrayList<StatusUpdate> publicPosts;
 	
+	/*
+	 * HTTP Return Headers. 
+	 * (Reminder when adding new headers please and "\r\n", anything after the last header should start with \r\n.)
+	 */
+	//HTTP Status Headers
+	private final static String STATUS101 = "HTTP/1.1 101 Switching Protocols\r\n";
+	private final static String STATUS200 = "HTTP/1.1 200 OK\r\n";
+	private final static String STATUS201 = "HTTP/1.1 201 Document Created\r\n";
+	private final static String STATUS301 = "HTTP/1.1 301 Moved Permenatly\r\n";
+	private final static String STATUS401 = "HTTP/1.1 401 Not logged in\r\n";
+	private final static String STATUS403 = "HTTP/1.1 403 Forbidden\r\n";
+	private final static String STATUS404 = "HTTP/1.1 404 Item Not Found\r\n";
+	private final static String STATUS501 = "HTTP/1.1 501 Not Implemented\r\n";
+	
+	//Content Type Headers 
+	private final static String NO_SNIFF = "X-Content-Type-Options: nosniff\r\n";
+	private final static String TEXTHTML = "Content-Type: text/html\r\n";
+	private final static String TEXTJAVA = "Content-Type: text/javascript\r\n";
+	private final static String TEXT_CSS = "Content-Type: text/css\r\n";
+	private final static String TEXTPLAN = "Content-Type: text/plain\r\n";
+	private final static String IMG__PNG = "Content-Type: image/png\r\n";
+	private final static String CONTENTL = "Content-Length: ";
+	private final static String LOCATION = "Location: ";
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void main(String args[]) throws IOException, NoSuchAlgorithmException {
 		server = new ServerSocket(port);
-        System.out.println("Running Server now on port: " + port);
+        System.out.println("Project server running on port: " + port);
         List<Socket> clients = new ArrayList<>();
-        publicPosts = new ArrayList<StatusUpdate>();
-//      Uncomment line below to test docker compose
+        
+		//initializes to handle pages, userdata, etc
+		initalizeLists();
+		csvReader();
+        
+//      Uncomment line below to test docker compose and mango
 //		MongoClient mongo = MongoClients.create("mongodb://mongo:27017");
 //		MongoClient mongo = MongoClients.create("mongodb://localhost:27017");
 
@@ -45,15 +108,18 @@ public class Webserver {
         while(true){
             try(Socket socket = server.accept())
             {
-	            InputStream input = socket.getInputStream();
-	            
-	            BufferedReader sc = new BufferedReader(new InputStreamReader(input));
+            	//Creating the input and streams via the socket.
+            	inStream = socket.getInputStream();
+	            breader = new BufferedReader(new InputStreamReader(inStream));
 		        
+	            //Reads request send from the client browser.
+				readRequest();
+				
 		        ClientsInformation temp = new ClientsInformation();
-		        temp.update(sc);
+		        temp.update(breader);
 		        String request = temp.getRequest();
 		        
-		        Authenticate authenticate = new Authenticate(sc);
+		        Authenticate authenticate = new Authenticate(breader);
 		        ArrayList<String> userData = authenticate.getUserData();
 		        
 		        PrintStream ps = new PrintStream(socket.getOutputStream());
@@ -453,11 +519,76 @@ public class Webserver {
 		        }
 		        
 		        ps.close();
-		        sc.close();
-		        input.close();
+		        breader.close();
+		        inStream.close();
             }
         }
 	}
+
+
+	/**
+	 * Reads the Request from the scanner and parses it. 
+	 * It does not return due to the use of global variables in the WebServer Class.
+	 */
+	private static void readRequest() {
+		//Reads the first line. Of the Get Request (ie. "GET /index HTTP/1.1")
+		input = scaner.nextLine();
+		System.out.println("\nThe client submitted:\n" + input); 
+		if(input.contains("GET")) {
+			makeGETResponse();
+		}else if(input.contains("POST")) {
+			makePOSTResponse();
+		}else {
+			System.out.println("\nThe System failed to detect a GET or POST request\n");
+			response = new GetResponse("GET /404 HTTP/1.1");
+		}
+	}
+
+	/**
+	 * Parses the clients request so long it is a GET request
+	 */
+	private static void makeGETResponse() {
+		response = new GetResponse(input);
+		
+		//Adds additionaly headers so long they exist (ie. "Host: localhost:8000" or "Cookie: user=visited")
+		boolean headerExist = true; 
+		while(headerExist) {
+			String line = scaner.nextLine();
+			System.out.println(line);
+			
+			//If the line exist we parse it in the response class. Other we break from the loop.
+			if(line.isEmpty()) headerExist = false;
+			else response.parseln(line);
+		}
+		
+	}
+
+	/**
+	 * Parses the clients request so long it is a POST request
+	 */
+	private static void makePOSTResponse() {
+		response = new PostResponse(input);
+		
+		//Adds additionally headers so long they exist (ie. "Host: localhost:8000" or "Cookie: user=visited")
+		boolean headerExist = true; 
+		while(headerExist) {
+			String line = scaner.nextLine();
+			System.out.println(line);
+			//If the line exist we parse it in the response class. If not we skip, if it ends with -- were done.
+			if(line.isEmpty()) {
+//				scaner.nextLine();
+			}else if(line.endsWith("--")){
+//				response.parseln(line);
+				headerExist = false;
+			}else {
+				response.parseln(line);
+			}
+			
+		}
+		//addToDocument(((PostResponse) response).getRawData(), csvData);
+
+	}
+
 
 	/**
 	 * From Alam HW5
@@ -527,6 +658,70 @@ public class Webserver {
 				System.out.println("Could not write " + string + " to the history");
 			}
 		}
+	}
+	
+	/**
+	 * Alam HW8
+	 * Stores all csv data into the hash maps prom previous session.
+	 * @throws IOException 
+	 */
+	private static void csvReader() throws IOException {
+		BufferedReader fileReader = new BufferedReader(new FileReader(csvData));
+		String temp = "";
+		System.out.println("\nAdding user data locally");
+		while((temp = fileReader.readLine())!= null && !temp.isEmpty()) {
+			String[] parsed = temp.split(",");
+			userpass.put(parsed[0], parsed[1]);
+	    	usersalt.put(parsed[0], parsed[2]);
+	    	usertoke.put(parsed[0], parsed[3]);
+	    	userexit.put(parsed[0], false);
+	    	System.out.println("  Added: " + parsed[0] + ", " + parsed[1] + ", " +parsed[2] + ", " + parsed[3] );
+		}
+		fileReader.close();
+	}
+	
+	/**
+	 * Alam HW 8
+	 * Initializes all the key search words for the pages stored on the server.
+	 */
+	private static void initalizeLists() {
+		//Known websites
+		webList = new HashMap<String, String>();
+		webList.put("/index.html","public/index.html");
+		webList.put("/home.html","public/home.html");
+		webList.put("/registration.html","public/registration.html");
+		webList.put("/dmtemplate.html","public/dmtemplate.html");
+		webList.put("/friends.html","public/friend.html");	
+		webList.put("/messages.html","public/messages.html");
+		webList.put("/profile.html","public/profile.html");
+		
+		//Redirects
+		movedList = new HashMap<String, String>();
+		movedList.put("/","/index.html");
+		movedList.put("/page1","index.html");
+		movedList.put("/index","/index.html");
+		movedList.put("/1","/index.html");
+		movedList.put("/home","/home.html");
+		movedList.put("/register","/registration.html");
+		movedList.put("/reg","/registration.html");
+		movedList.put("/signup","/registration.html");
+		movedList.put("/r","/registration.html");
+		
+		//Known images
+		imageList = new ArrayList<String>();
+		imageList.add("charicon.jpg");
+		imageList.add("duck.png");
+		imageList.add("facebook.png");
+		imageList.add("road.jpeg");
+		
+		//User data
+		formList = new ArrayList<String>();
+        publicPosts = new ArrayList<StatusUpdate>();
+        userpass = new HashMap<String, String>();
+    	usersalt = new HashMap<String, String>();
+    	usertoke = new HashMap<String, String>();
+    	userexit = new HashMap<String, Boolean>();
+		
 	}
 	
 }
