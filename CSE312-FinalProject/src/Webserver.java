@@ -39,7 +39,7 @@ public class Webserver {
 	//Global Variable for server operation
 	private static InputStream inStream;
 	private static BufferedReader breader; 
-	private static Scanner scaner;
+	//private static Scanner scaner;
 	private static PrintStream stream;
 	private static Response response;
 	private static byte [] rawImage;
@@ -114,6 +114,32 @@ public class Webserver {
 		        
 	            //Reads request send from the client browser.
 				readRequest();
+				
+				//Create an empty output. This will contain the data sent to the client.
+				output = "";
+				
+				//Used for serving images
+				boolean fileTypeIsImage = false;
+				rawImage = null;
+				
+				//Creates a response based of the request.
+				if(response.getRequestMethod().equals("GET")) fileTypeIsImage = handleGETRequest();
+				else if(response.getRequestMethod().equals("POST")) fileTypeIsImage = handlePOSTRequest();
+				
+				//Output the return headers and content to the user.
+				System.out.println("\nThe server responded with \n" + output + "\n\n");
+				stream.write(output.getBytes("UTF-8")); //Converts into a byte array for the browser.
+				//Images are out put differently because it is already in bytes.
+				if(fileTypeIsImage) {
+					stream.write(rawImage);
+					fileTypeIsImage = false;
+				}
+				output = "";
+                breader.close();
+                
+                /**
+                 * TODO Terences code below
+                 */
 				
 		        ClientsInformation temp = new ClientsInformation();
 		        temp.update(breader);
@@ -368,7 +394,7 @@ public class Webserver {
 
 		        /** TODO make sure data is added **/
 		        	String idx = "publicFiles/info.txt";
-					String fileData = readTextData(idx);
+					String fileData = readTextData2(idx);
 		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n\r\n";
 		        	outputString = "Content-Length: " + fileData.length() + "\r\n\r\n" + fileData;
 					ps.write(outputString.getBytes("UTF-8"));
@@ -379,7 +405,7 @@ public class Webserver {
 		         */
 		        if(request.compareTo("/statusUpdate") == 0) {
 		        	String idx = "public/posts.txt";
-					String fileData = readTextData(idx);
+					String fileData = readTextData2(idx);
 		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n";
 					outputString += "Content-Length: " + (fileData.length()) +"\r\n\r\n" + fileData;
 					ps.write(outputString.getBytes("UTF-8"));
@@ -527,12 +553,14 @@ public class Webserver {
 
 
 	/**
+	 * Alam HW8
 	 * Reads the Request from the scanner and parses it. 
 	 * It does not return due to the use of global variables in the WebServer Class.
+	 * @throws IOException 
 	 */
-	private static void readRequest() {
+	private static void readRequest() throws IOException {
 		//Reads the first line. Of the Get Request (ie. "GET /index HTTP/1.1")
-		input = scaner.nextLine();
+		input = breader.readLine();
 		System.out.println("\nThe client submitted:\n" + input); 
 		if(input.contains("GET")) {
 			makeGETResponse();
@@ -545,15 +573,17 @@ public class Webserver {
 	}
 
 	/**
+	 * Alam HW5
 	 * Parses the clients request so long it is a GET request
+	 * @throws IOException 
 	 */
-	private static void makeGETResponse() {
+	private static void makeGETResponse() throws IOException {
 		response = new GetResponse(input);
 		
-		//Adds additionaly headers so long they exist (ie. "Host: localhost:8000" or "Cookie: user=visited")
+		//Adds additionally headers so long they exist (ie. "Host: localhost:8000" or "Cookie: user=visited")
 		boolean headerExist = true; 
 		while(headerExist) {
-			String line = scaner.nextLine();
+			String line = breader.readLine();
 			System.out.println(line);
 			
 			//If the line exist we parse it in the response class. Other we break from the loop.
@@ -564,15 +594,17 @@ public class Webserver {
 	}
 
 	/**
+	 * Alam HW8
 	 * Parses the clients request so long it is a POST request
+	 * @throws IOException 
 	 */
-	private static void makePOSTResponse() {
+	private static void makePOSTResponse() throws IOException {
 		response = new PostResponse(input);
 		
 		//Adds additionally headers so long they exist (ie. "Host: localhost:8000" or "Cookie: user=visited")
 		boolean headerExist = true; 
 		while(headerExist) {
-			String line = scaner.nextLine();
+			String line = breader.readLine();
 			System.out.println(line);
 			//If the line exist we parse it in the response class. If not we skip, if it ends with -- were done.
 			if(line.isEmpty()) {
@@ -588,7 +620,176 @@ public class Webserver {
 		//addToDocument(((PostResponse) response).getRawData(), csvData);
 
 	}
+	
+	/**
+	 * Alam HW5
+	 * Handles GET request based on the type and destination.
+	 * Note all files must be in publicFiles to work!
+	 * @return true if it is handling an image false otherwise.
+	 * @throws IOException If you give it a path that does not exist
+	 * @throws NoSuchAlgorithmException 
+	 */
+	private static boolean handleGETRequest() throws IOException, NoSuchAlgorithmException{
+		String path = response.getPath();
+		System.out.println("The path being searched for is :" + path);
+		
+		//All 200 properly typed outpaths
+		if(path.endsWith(".html")) {
+			String fileData = "";
+			if(webList.containsKey(path)) {
+				output += STATUS200 + TEXTHTML + NO_SNIFF;
+				boolean session = cookieCheck();
+				System.out.println("session is " + session);
+				if(session && path.equals("/index.html")) {
+					String user = findUserFromCookie();
+					fileData = readFileTemp("public/home.html", "{{ User }}", user);
+				}else {
+					fileData = readFileData(webList.get(path));
+				}
+				output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
+				return false;
+			}
+		
+		//All images let the browser sniff the image out for convenience	
+		}else if (path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg") || path.endsWith(".gif")){
+			output += STATUS200 + IMG__PNG; //+ NO_SNIFF;
+			rawImage = readImageData(path);
+			output += CONTENTL + rawImage.length + "\r\n\r\n";
+			return true;
+		
+		//All javascript files
+		}else if (path.endsWith(".js")) {
+			output += STATUS200 + TEXTJAVA + NO_SNIFF; 
+			String fileData = readFileData("public" + path);
+			output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
+			return false;
+		
+		//All css files 
+		}else if (path.endsWith(".css")){
+			output += STATUS200 + TEXT_CSS + NO_SNIFF;
+			String fileData = readFileData("public" + path);
+			output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
+			return false;
+			
+		//All paths that are not typed properly. These only work on key words ie. /1, /home, /page2
+		}else if (movedList.containsKey(path)) {
+			System.out.println("This is where the 301 redirects to: " + movedList.get(path));
+			output += STATUS301;// + TEXTHTML + NO_SNIFF;
+			output += LOCATION + movedList.get(path); 
+			return false;
+			
+		}
+		//When none of the paths work the browser displays a 404 error.
+		output += STATUS404 + TEXTHTML + NO_SNIFF;
+		String fileData = readFileData("public/notFound.html");
+		output += CONTENTL + fileData.length() +"\r\n\r\n" + fileData;
+		return false;
+	}
 
+
+	private static boolean handlePOSTRequest() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * Alam HW8 
+	 * Checks to see if a valid cookie exists
+	 * @return true if found in the CSV
+	 */
+	private static boolean cookieCheck() {
+		if(response.search("Cookie")) {
+			System.out.println("A cookie exists");
+			String temp = response.find("Cookie");
+			String[] split = temp.split("=");
+			String token = split[1] + "==";
+			System.out.println("The token is " + token);
+			if(usertoke.containsValue(token)) {
+				System.out.println("And the token should be valid");;
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Alam HW8
+	 * Finds the user associated with a cookie 
+	 * @param cookie 
+	 * @return user that the cookie belongs too
+	 */
+	private static String findUserFromCookie() {
+		String user = "";
+		String temp = response.find("Cookie");
+		String[] split = temp.split("=");
+		String token = split[1] + "==";
+		
+		for(String s: usertoke.keySet()) {
+			if(usertoke.get(s).equals(token)) {
+				user = s;
+				break;
+			}
+		}
+		return user;
+	}
+	
+	/**
+	 * Alam HW5
+	 * Reads the HTML/CSS/JS Files and puts it into a string.
+	 * @param Name of the files that needs to be converted to a String.
+	 * @return Converted file as a string.
+	 * @throws IOException 
+	 */
+	private static String readFileData(String index) throws IOException {
+		//Creates a new BufferedReader which consists of a FileReader with the File which contains the index of the file;
+		BufferedReader fileReader = new BufferedReader(new FileReader(new File(index)));
+		String fileData = "";
+		String temp = "";
+		//Reads each line of the file and adds it to fileData
+		while((temp = fileReader.readLine())!= null) {
+			fileData += temp;
+		}
+		fileReader.close();
+		return fileData;
+	}
+	
+	/**
+	 * Alam HW8
+	 * Reads the file but also replaces the key with the replacement.
+	 * @param index Name of the file that needs to be converted to a string.
+	 * @param key the term to be replaced.
+	 * @param replace the new term to take its place.
+	 * @return Converted files as a string with modifications
+	 * @throws IOException
+	 */
+	private static String readFileTemp(String index, String key, String replace) throws IOException {
+		BufferedReader fileReader = new BufferedReader(new FileReader(new File(index)));
+		String fileData = "";
+		String temp = "";
+		//Reads each line of the file and adds it to fileData
+		while((temp = fileReader.readLine())!= null) {
+			temp = temp.replace(key, replace);
+			fileData += temp;
+		}
+		fileReader.close();
+		return fileData;
+	}
+	
+	
+	/**
+	 * Alam HW8
+	 * Adds an alert to the webpage when it loads
+	 * @param fileData file to be modified 
+	 * @param statement alert statement
+	 * @return webpage with alert
+	 */
+	private static String fileDataAddAlert (String fileData, String statement) {
+		String alert = "<script> function onload(){ alert(\"";
+		alert += statement;
+		alert += "\");}</script><body onload = \"onload()\">";
+		fileData = fileData.replace("<body>", alert);
+		return fileData;
+	}
 
 	/**
 	 * From Alam HW5
@@ -597,7 +798,7 @@ public class Webserver {
 	 * @return Converted file as a string.
 	 * @throws IOException
 	 */
-	private static String readTextData(String index) throws IOException {
+	private static String readTextData2(String index) throws IOException {
 		//Creates a new BufferedReader which consists of a FileReader with the File which contains the index of the file;
 		BufferedReader fileReader = new BufferedReader(new FileReader(new File(index)));
 		String fileData = "";
@@ -623,6 +824,35 @@ public class Webserver {
 		fileReader.close();
 		return fileData;
 	}
+	
+	/**
+	 * Alam HW5
+	 * Reads and Looks for an image in the images folder.
+	 * Source: https://www.tutorialspoint.com/How-to-convert-Image-to-Byte-Array-in-java
+	 * 
+	 * @param string Name of image.
+	 * @return the image written as a string.
+	 * @throws IOException 
+	 */
+	private static byte[] readImageData(String index) throws IOException {
+		//Check the image type if the image type is not found then send the 404 error
+		String type = "";
+		if(index.endsWith("png")) {type = "png";}
+		else if (index.endsWith("jpg")) {type = "jpg";}
+		else if (index.endsWith("jpeg")) {type = "jpeg";}
+		else if (index.endsWith("gif")) {type = "gif";}
+		else {index = "Multimedia_Content/img404.png"; type = "png";}
+		
+		//check to see if image exist in imageList
+		if(imageList.contains(index)) {index = "img404.png"; type = "png";}
+		
+		//Turns the image 
+		BufferedImage bufferedReader = ImageIO.read(new File("Multimedia_Content/" + index));
+		ByteArrayOutputStream imageOutPut = new ByteArrayOutputStream();
+		ImageIO.write(bufferedReader, type , imageOutPut); 
+		return imageOutPut.toByteArray();
+	}
+	
 	/**
 	 * From Alam HW 5
 	 * Method takes a string and adds it into a new document as a new line.
