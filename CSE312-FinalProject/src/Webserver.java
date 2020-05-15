@@ -139,7 +139,7 @@ public class Webserver {
                 breader.close();
                 
                 /**
-                 * TODO Terences code below
+                 * Terence's code below
                  */
 				
 //		        ClientsInformation temp = new ClientsInformation();
@@ -707,7 +707,6 @@ public class Webserver {
 		if(path.endsWith("/registration")) {
 			String warning = "Account failed: ";
 			ArrayList<String> up = ((PostResponse) response).getRawData();
-			System.out.println("!!!!!up.size() is " + up.size() + " !!!!");
 			if (up.size() != 2) { 
 				attempt = false; 
 				warning += "It did not contain all required fields. ";
@@ -761,7 +760,6 @@ public class Webserver {
 			String warning = "Incorrect login please try again: ";
 		
 			ArrayList<String> up = ((PostResponse) response).getRawData();
-			System.out.println("!!!!!up.size() is " + up.size() + " !!!!");
 			if (up.size() != 2) { 
 				attempt = false; 
 				warning += "It did not contain all required fields. ";
