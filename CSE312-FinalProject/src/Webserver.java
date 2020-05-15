@@ -655,8 +655,10 @@ public class Webserver {
 					String user = findUserFromCookie();
 					if(path.equals("/index.html")) {
 						fileData = readFileTemp("public/home.html", "{{ User }}", user);
+						fileData = fileData.replace("{{ person }}", "Your");
 					}else {
 						fileData = readFileTemp(webList.get(path), "{{ User }}", user);
+						fileData = fileData.replace("{{ person }}", "Your");
 					}
 				}else {
 					if(path.equals("/index.html") || path.equals("/registration.html")) {
@@ -667,6 +669,13 @@ public class Webserver {
 				}
 
 				output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
+				return false;
+			}else {
+				
+				//When none of the paths work the browser displays a 404 error.
+				output += STATUS404 + TEXTHTML + NO_SNIFF;
+				fileData = readFileData("public/notFound.html");
+				output += CONTENTL + fileData.length() +"\r\n\r\n" + fileData;
 				return false;
 			}
 		
@@ -1007,7 +1016,7 @@ public class Webserver {
 		else {index = "Multimedia_Content/img404.png"; type = "png";}
 		
 		//check to see if image exist in imageList
-		if(imageList.contains(index)) {index = "img404.png"; type = "png";}
+		if(!imageList.contains(index)) {index = "img404.png"; type = "png";}
 		
 		//Turns the image 
 		BufferedImage bufferedReader = ImageIO.read(new File("Multimedia_Content/" + index));
@@ -1135,10 +1144,10 @@ public class Webserver {
 		
 		//Known images
 		imageList = new ArrayList<String>();
-		imageList.add("charicon.jpg");
-		imageList.add("duck.png");
-		imageList.add("facebook.png");
-		imageList.add("road.jpeg");
+		imageList.add("/charicon.jpg");
+		imageList.add("/duck.png");
+		imageList.add("/facebook.png");
+		imageList.add("/Road.jpeg");
 		
 		//User data
 		formList = new ArrayList<String>();

@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>CSE312 Social Media - Friends</title>
+    <title>CSE312 Social Media - {{ User }}'s Friends</title>
     <link rel="stylesheet" type="text/css" href="basic.css" />
     <script src = "script2.js"></script>
   </head>
@@ -12,6 +12,7 @@
   		<a href="home.html">Home</a>
   		<a href="profile.html">Profile</a>
   		<a href="friends.html">Friends</a>
+  		<a href="messages.html">Messages</a>
   		<div class="navright">
   			<a href="index.html">Logout</a>
   		</div>
@@ -26,6 +27,6 @@
   		<div class="names">Add Name Here</div>
   		<button onclick=message()>Message</button>
 	</div>
-	<div id="friendsToAdd">{{ add friends }}</div>
+	<div id="friendsToAdd">{{ person }} friends</div>
   </body>
 </html>

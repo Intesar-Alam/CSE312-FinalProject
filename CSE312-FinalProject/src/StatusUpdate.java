@@ -24,6 +24,9 @@ public class StatusUpdate {
 	 * @param username
 	 */
 	public StatusUpdate(String status, String username) {
+		status = status.replace("&", "&amp");
+		status = status.replace("<", "&lt");
+		status = status.replace(">", "&gt");
 		STATUS = status; 
 		username = username.replace("&", "&amp");
 		username = username.replace("<", "&lt");
@@ -39,6 +42,9 @@ public class StatusUpdate {
 	 * @param time
 	 */
 	public StatusUpdate(String status, String username, String time) {
+		status = status.replace("&", "&amp");
+		status = status.replace("<", "&lt");
+		status = status.replace(">", "&gt");
 		STATUS = status; 
 		username = username.replace("&", "&amp");
 		username = username.replace("<", "&lt");
@@ -72,7 +78,6 @@ public class StatusUpdate {
 				"      <button class=\"upclick\" onclick=\"upvote(1)\">up Vote</button>\r\n" + 
 				"      <span id=\"currVotes {{ votes }} \"></span>\r\n" + 
 				"      <button class=\"downclick\" onclick=\"downvote(1)\">down Vote</button>\r\n" + 
-				"      <a>{{ title }}</a>\r\n" + 
 				"    </li>" +
 				"<br />";
 	}

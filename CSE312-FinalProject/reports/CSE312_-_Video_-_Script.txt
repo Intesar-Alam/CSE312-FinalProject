@@ -1,5 +1,5 @@
 ---> Our social media site begins with a login page prompting the user to type in their username and password.
----> Below are several links which would prove to direct you to the home page, profile page, or direct messages page if the
+---> (* Below are several links which would prove to direct you to the home page, profile page, or direct messages page if the *)
 user has successfully logged in. Which you can see here we have not.
 ---> So then we'll return to the home page and click to create an account.
 

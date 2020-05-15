@@ -50,6 +50,7 @@ a:link, a:visited {
   position: fixed;
   top: 0;
   width: 100%;
+  opacity: 100%;
 }
 
 .navbar a {
@@ -88,10 +89,10 @@ a:link, a:visited {
 
   border-style: solid;
   border-color: white;
-  background-color: #696969;
-  opacity: 0.50;
+  background-color: black;
 
   height: 100px;
+  z = -1;
 }
 
 /*Will remove this after project is submitted*/
