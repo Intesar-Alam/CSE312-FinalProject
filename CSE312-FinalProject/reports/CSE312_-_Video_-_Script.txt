@@ -52,6 +52,7 @@
 - Webserver class is where the TCP Socket server is created. The input stream is taken and parsed according to the header
 	response and handled differently depending on the case. This is achieved through the use of makeGETResponse(),
 	makePOSTResponse(), handleGETRequest(), and handlePOSTRequest().
+- Response is the superclass to GetResponse and POSTResponse which handles each type of response. 
 - StatusUpdate class is where the user status like name and time are kept in order to keep track of user content.
 - PostResponse class is where the parser for POST HTTP responses send though localhost.
 - Authenticate class is where the functions to authenticate the password is used.
