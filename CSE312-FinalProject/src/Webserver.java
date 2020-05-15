@@ -14,6 +14,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +62,7 @@ public class Webserver {
 	
 	//Change type to StatusUpdate in the future when it starts working
 	private static ArrayList<StatusUpdate> publicPosts;
+	private static HashMap<String, Boolean> userPost;
 	
 	/*
 	 * HTTP Return Headers. 
@@ -639,19 +642,30 @@ public class Webserver {
 		String path = response.getPath();
 		System.out.println("The path being searched for is :" + path);
 		
-		//All 200 properly typed outpaths
+		//All 200 properly typed out paths
 		if(path.endsWith(".html")) {
 			String fileData = "";
 			if(webList.containsKey(path)) {
 				output += STATUS200 + TEXTHTML + NO_SNIFF;
 				boolean session = cookieCheck();
 				System.out.println("session is " + session);
-				if(session && path.equals("/index.html")) {
+				
+				//Security: no entry unless you have a valid cookie
+				if(session) {
 					String user = findUserFromCookie();
-					fileData = readFileTemp("public/home.html", "{{ User }}", user);
+					if(path.equals("/index.html")) {
+						fileData = readFileTemp("public/home.html", "{{ User }}", user);
+					}else {
+						fileData = readFileTemp(webList.get(path), "{{ User }}", user);
+					}
 				}else {
-					fileData = readFileData(webList.get(path));
+					if(path.equals("/index.html") || path.equals("/registration.html")) {
+						fileData = readFileData(webList.get(path));
+					}else {
+						fileData = readFileData("public/deny.html");
+					}
 				}
+
 				output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
 				return false;
 			}
@@ -688,6 +702,9 @@ public class Webserver {
 		}else if(path.equals("/chat")){
 			output += STATUS200 + TEXTPLAN;// + NO_SNIFF;
 			String fileData = "";
+//			//Makes most recent post appear first
+//			ArrayList<StatusUpdate> reversedPost = publicPosts;
+//			Collections.reverse(reversedPost);
 			for(StatusUpdate post: publicPosts) { fileData += post.getFullPost(); }
 			output += CONTENTL + (fileData.length()) +"\r\n\r\n" + fileData;
 			return false;
@@ -817,11 +834,16 @@ public class Webserver {
 			}else {
 				update = new StatusUpdate(formdat);
 			}
-			publicPosts.add(update);
+			publicPosts.add(0, update);
+			userPost.put(update.getCSV(), false);
 			addToDocument(update, csvPost);
 			output += STATUS200 + TEXTPLAN;// + NO_SNIFF;
 			fileData = "";
+//			//Makes most recent post appear first
+//			ArrayList<StatusUpdate> reversedPost = publicPosts;
+//			Collections.reverse(reversedPost);
 			for(StatusUpdate post: publicPosts) { fileData += post.getFullPost(); }
+			
 			output += CONTENTL + (fileData.length()) +"\r\n\r\n" + fileData;
 			return false;
 		}
@@ -1020,8 +1042,12 @@ public class Webserver {
 	 * @throws IOException 
 	 */
 	private static void addToDocument(StatusUpdate update, File txtFile) throws IOException {
-		addToDocument(update.getCSV(), txtFile);
-		
+		for(StatusUpdate post: publicPosts) {
+			if(!userPost.get(post.getCSV())) {
+				addToDocument(post.getCSV(), txtFile);
+				userPost.put(post.getCSV(), true);
+			}
+		}
 	}
 
 	
@@ -1055,7 +1081,8 @@ public class Webserver {
 		while((line = fileReader.readLine())!= null && !line.isEmpty()) {
 			String[] parsed = line.split(",");
 			StatusUpdate status = new StatusUpdate(parsed[0],parsed[1],parsed[2]);
-			publicPosts.add(status);
+			publicPosts.add(0, status);
+			userPost.put(line, false);
 		}
 	}
 	
@@ -1116,6 +1143,7 @@ public class Webserver {
 		//User data
 		formList = new ArrayList<String>();
         publicPosts = new ArrayList<StatusUpdate>();
+        userPost = new HashMap<String, Boolean>();
         userpass = new HashMap<String, String>();
     	usersalt = new HashMap<String, String>();
     	usertoke = new HashMap<String, String>();

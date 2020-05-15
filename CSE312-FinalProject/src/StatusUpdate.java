@@ -57,7 +57,11 @@ public class StatusUpdate {
 	public String getFullPost() {
 		return  "<br />" +
 				"<li class=\"vote\">\r\n" + 
-				getPost() +
+				USERNAME + " said:" +
+				"<br />" +
+				STATUS +
+				"<br />" +
+				" @" + TIME +
 				"<hr />" +
 				"      <button class=\"upclick\" onclick=\"upvote(1)\">up Vote</button>\r\n" + 
 				"      <span id=\"currVotes {{ votes }} \"></span>\r\n" + 
