@@ -28,7 +28,7 @@ function sendMessageWithForm() {
 	const formElement = document.getElementById("myForm");
  	const formData = new FormData(formElement);
  	const request = new XMLHttpRequest();
- 	var cht = document.getElementById("body");
+ 	var cht = document.getElementById("bdy");
  	
  	request.onreadystatechange = function(){
    	if(this.readyState	===	4	&&	this.status	===	200){

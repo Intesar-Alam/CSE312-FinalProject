@@ -8,7 +8,7 @@
 		<script>
 		
 		function chathis(){
-			setInterval(getMessages, 5000);
+			setInterval(getMessages, 10000);
 		}
 		
 		function getMessages(){
@@ -44,18 +44,6 @@
 	<br />
 
 	<br />
-
-	<!--
-	<!--Upload message or files here -->
-	<form action="/upload" method="post" enctype="multipart/form-data">
-		 <label for="form-chat">Make A post:</label>
-		 <input id="form-chat" type="text" name="message"><br/>
-		 <label for="form-file">Upload File: </label>
-		 <input id="form-file" type="file" name="upload">
-		 <br />
-		 <input type="submit" value="Submit">
-	</form>
-	-->
 
 	<form enctype="multipart/form-data" id="myForm" onsubmit="sendMessageWithForm();return false;">
         <label for = "form-chat">Chat: </label>

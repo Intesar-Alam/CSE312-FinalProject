@@ -74,6 +74,10 @@ public class PostResponse extends Response {
 		return img;
 	}
 	
+	/** 
+	 * Returns each form item into an arraylist
+	 * @return
+	 */
 	public ArrayList<String> getRawData() {
 		return rawData;
 	}

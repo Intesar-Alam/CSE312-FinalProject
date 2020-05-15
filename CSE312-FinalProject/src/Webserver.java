@@ -50,6 +50,7 @@ public class Webserver {
 	private static ArrayList<String> imageList;
 	private static ArrayList<String> formList;//HW4 Objective 1
 	private static File csvData = new File("src/logindat.csv");
+	private static File csvPost = new File("public/posts.txt");
 	
 	//Storing the userdata
 	private static HashMap<String, String> userpass;
@@ -99,6 +100,7 @@ public class Webserver {
 		//initializes to handle pages, userdata, etc
 		initalizeLists();
 		csvReader();
+		csvStatusReader();
         
 //      Uncomment line below to test docker compose and mango
 //		MongoClient mongo = MongoClients.create("mongodb://mongo:27017");
@@ -682,7 +684,15 @@ public class Webserver {
 			output += LOCATION + movedList.get(path); 
 			return false;
 			
+		// returns the posts in the home page
+		}else if(path.equals("/chat")){
+			output += STATUS200 + TEXTPLAN;// + NO_SNIFF;
+			String fileData = "";
+			for(StatusUpdate post: publicPosts) { fileData += post.getFullPost(); }
+			output += CONTENTL + (fileData.length()) +"\r\n\r\n" + fileData;
+			return false;
 		}
+		
 		//When none of the paths work the browser displays a 404 error.
 		output += STATUS404 + TEXTHTML + NO_SNIFF;
 		String fileData = readFileData("public/notFound.html");
@@ -701,9 +711,9 @@ public class Webserver {
 		String path = response.getPath();
 		String fileData = "";
 		boolean attempt = true;
-		
-		
 		System.out.println("The path being searched for is :" + path);
+		
+		// new account creation
 		if(path.endsWith("/registration")) {
 			String warning = "Account failed: ";
 			ArrayList<String> up = ((PostResponse) response).getRawData();
@@ -756,6 +766,7 @@ public class Webserver {
 			}
 			return false;
 			
+		//login from index page
 		}else if(path.endsWith("/login")) {
 			String warning = "Incorrect login please try again: ";
 		
@@ -794,7 +805,25 @@ public class Webserver {
 				fileData = fileDataAddAlert(fileData, warning);
 				output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
 			}
+			return false;
 			
+		//multimedia post from home page
+		}else if(path.endsWith("/send-message-form")) {
+			StatusUpdate update = null;
+			String formdat = (String) ((ArrayList<String>) ((PostResponse) response).getRawData()).get(0);
+			if (cookieCheck()) {
+				String user = findUserFromCookie();
+				update = new StatusUpdate(formdat, user);
+			}else {
+				update = new StatusUpdate(formdat);
+			}
+			publicPosts.add(update);
+			addToDocument(update, csvPost);
+			output += STATUS200 + TEXTPLAN;// + NO_SNIFF;
+			fileData = "";
+			for(StatusUpdate post: publicPosts) { fileData += post.getFullPost(); }
+			output += CONTENTL + (fileData.length()) +"\r\n\r\n" + fileData;
+			return false;
 		}
 
 		output += STATUS501 + TEXTHTML + NO_SNIFF;
@@ -802,6 +831,7 @@ public class Webserver {
 		+ "Page not created on server: " + port+ " at: " + timestamp;
 		return false;
 	}
+
 
 	/**
 	 * Alam HW8 
@@ -909,7 +939,7 @@ public class Webserver {
 	 * @return Converted file as a string.
 	 * @throws IOException
 	 */
-	private static String readTextData2(String index) throws IOException {
+	private static String readTextData(String index) throws IOException {
 		//Creates a new BufferedReader which consists of a FileReader with the File which contains the index of the file;
 		BufferedReader fileReader = new BufferedReader(new FileReader(new File(index)));
 		String fileData = "";
@@ -984,21 +1014,16 @@ public class Webserver {
 	}
 	
 	/**
-	 * From Alam HW 5
-	 * Method takes an array and adds it into a new document each item in the array is it's own line.
-	 * @param Array to be added to the document?
+	 * Method takes a statusUpdate and adds it into a new document.
+	 * @param Status Update to be added to the document
 	 * @param The file that the array is being added to 
 	 * @throws IOException 
 	 */
-	private static void addToDocument(ArrayList<String> stringList, File txtFile) {
-		for (String string: stringList) {
-			try {
-				addToDocument(string, txtFile);
-			} catch (IOException e) {
-				System.out.println("Could not write " + string + " to the history");
-			}
-		}
+	private static void addToDocument(StatusUpdate update, File txtFile) throws IOException {
+		addToDocument(update.getCSV(), txtFile);
+		
 	}
+
 	
 	/**
 	 * Alam HW8
@@ -1007,10 +1032,10 @@ public class Webserver {
 	 */
 	private static void csvReader() throws IOException {
 		BufferedReader fileReader = new BufferedReader(new FileReader(csvData));
-		String temp = "";
+		String line = "";
 		System.out.println("\nAdding user data locally");
-		while((temp = fileReader.readLine())!= null && !temp.isEmpty()) {
-			String[] parsed = temp.split(",");
+		while((line = fileReader.readLine())!= null && !line.isEmpty()) {
+			String[] parsed = line.split(",");
 			userpass.put(parsed[0], parsed[1]);
 	    	usersalt.put(parsed[0], parsed[2]);
 	    	usertoke.put(parsed[0], parsed[3]);
@@ -1018,6 +1043,20 @@ public class Webserver {
 	    	System.out.println("  Added: " + parsed[0] + ", " + parsed[1] + ", " +parsed[2] + ", " + parsed[3] );
 		}
 		fileReader.close();
+	}
+	
+	/**
+	 * Stores all post into an arrayList from the previous session
+	 * @throws IOException
+	 */
+	private static void csvStatusReader() throws IOException{
+		BufferedReader fileReader = new BufferedReader(new FileReader(csvPost));
+		String line = "";
+		while((line = fileReader.readLine())!= null && !line.isEmpty()) {
+			String[] parsed = line.split(",");
+			StatusUpdate status = new StatusUpdate(parsed[0],parsed[1],parsed[2]);
+			publicPosts.add(status);
+		}
 	}
 	
 	/**
