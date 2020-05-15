@@ -52,7 +52,7 @@
 - Webserver class is where the TCP Socket server is created. The input stream is taken and parsed according to the header
 	response and handled differently depending on the case. This is achieved through the use of makeGETResponse(),
 	makePOSTResponse(), handleGETRequest(), and handlePOSTRequest().
-- Response is the superclass to GetResponse and POSTResponse which handles each type of response. 
+- Response is the superclass to GetResponse and POSTResponse which handles each type of response
 - StatusUpdate class is where the user status like name and time are kept in order to keep track of user content.
 - PostResponse class is where the parser for POST HTTP responses send though localhost.
 - Authenticate class is where the functions to authenticate the password is used.
@@ -66,18 +66,20 @@
 --------------------------------------------------
 
 ---> In developing this software, we realized as a team that planning and development in the first stages is critical and
-we should have taken it more seriously. It didn't help that no one was willing to communicate with each other, making the
-online process extremely difficult.
+	we should have taken it more seriously. It didn't help that no one was willing to communicate with each other, making the
+	online process extremely difficult.
 
----> Because we assumed that we would have working assignments, it didn't occur to us how badly we would fail if half our
-assignments didn't work, which is the situation we were in. And it was far too late to study up on new libraries to use.
+---> We would definitely use libraries to make the coding process easier and not code from scratch 
+	We had a lot of problems with docker and mongo that we should have all done but we didn’t have time 
+	so one person had to figure out how docker works and one had to figure out mongo. 
+	We also should have put comments on methods so others didn’t have to figure out what does what.
 
 ---> If we started this project today, we would start by creating leadership and membership roles. In that way, everyone
-is sure to keep track of responsibilities, impending due dates, and reach for office hours if the rest of us were occupied
-with classes.
+	is sure to keep track of responsibilities, impending due dates, and reach for office hours if the rest of us were occupied
+	with classes.
 
 ---> In all honesty working with friends was not as good as an idea like we thought mainly because no one wanted to yell at
-each other's faces and when things do go sour we blame each other. We each understand our own capabilities, which in part led
-to different perspectives and disagreements.
+	each other's faces and when things do go sour we blame each other. We each understand our own capabilities, which in part led
+	to different perspectives and disagreements.
 
 --->A team mentality is something we all need to improve on if we are going to continue with this career.
