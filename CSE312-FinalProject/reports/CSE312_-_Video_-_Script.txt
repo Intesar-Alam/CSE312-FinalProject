@@ -1,32 +1,36 @@
 ---> Our social media site begins with a login page prompting the user to type in their username and password.
----> (* Below are several links which would prove to direct you to the home page, profile page, or direct messages page if the *)
-user has successfully logged in. Which you can see here we have not.
+---> Without an account you cannot access the site.
+---> *show off other pages with 401 error* 
 ---> So then we'll return to the home page and click to create an account.
 
 ---> Like any secure platform, the user's password must meet all the set requirements.
----> Upon clicking submit, the user will be alerted if they had successfully created an account. If not, they will be
-alerted as to why.
----> So then we'll create a new account with the username being Covid19 and let's try putting a password less than the
-required length.
+---> Upon clicking submit, the user will be alerted if they had successfully created an account. 
+	If not, they will be alerted as to why.
+---> So then we'll create a new account with the username being Covid19 
+	and let's try putting a password less than the required length.
 ---> Immediately the user is rejected and alerted that they have failed to meet the list of requirements as stated.
+---> Not lets try another password called stolemywilltolive!
+---> It should be rejected due to the fact it does not have any numbers.
 ---> Now we'll put a password that does meet the all the requirements : SemesterFail1!
----> The user will recieive a new alert telling them they can now log in.
+---> The user will receive a new alert telling them they can now log in as well as taking them back to the home page.
 
 ---> Upon logging in the user is greeted with the home page that contains multimedia content shared by other users.
 ---> The user is also able to post his or her own content and it will appear at the very top of the page with other users
-being able to see changes in their own time.
+	being able to see changes in their own time.
 ---> To show this, we will open another browser in which we will login with another existing account.
----> The only issue that seems to persist is the use of the up vote and down vote buttons which have been disabled for
-working purposes.
+---> The only issue that seems to persist is the use of the up vote and down vote buttons 
+	which have been disabled for working purposes.
 
 ---> The navigation bar above allows the user to navigate to his or her profile, see their friends list, or simply logout.
----> These are functions that have their own pages, but unfortunately crashes resulting in a non-working page.
+---> These are functions that have their own pages, but unfortunately these functions are still under construction.
 
+---> If a use tries to go to a page that doesn't exist they will receive a 404 error
 --------------------------------------------------
 
 ---> Starting with TCP socket connection:
 - java.awt library allows us to call for the BufferedImage class, which allows us to access and manipulate 
 	an image data. This is used in the process of uploading an image in the Webserver and ClientsInformation class.
+	Currently this feature has been disabled to provide a working server
 - java.io allows us to call for File, InputStream, InputStreamReader, PrintStream, BufferedReader, and 
 	several types of exceptions having to deal with reading stream errors without using the try and catch block. This is used in the 
 	process of establishing a TCP socket connection for an input and output, as well as opening a file connection
@@ -41,19 +45,21 @@ working purposes.
 - java.util allows us to call for ArrayList, Base64, HashMap, List, Scanner classes, which allows us to temporary
 	keep track of inputs when we read the information being sent like connection, images, votes, comments in the
 	Webserver, Websocket, and ClientsInformation class.
-- MongoDB is a document database program allowing private information and messages to be stored.
-
----> As of now, data is currently being kept in (???)
+- MongoDB is a document database program allowing private information and messages to be stored while it is set up were are pending it's utlization.
+---> As of now, data is currently being kept in csv files within our server
 
 ---> We have several classes that navigate our server:
 - Webserver class is where the TCP Socket server is created. The input stream is taken and parsed according to the header
 	response and handled differently depending on the case. This is achieved through the use of makeGETResponse(),
-	makePOSTResponse(), handleGETRequest(), and handle POSTRequest().
+	makePOSTResponse(), handleGETRequest(), and handlePOSTRequest().
 - StatusUpdate class is where the user status like name and time are kept in order to keep track of user content.
 - PostResponse class is where the parser for POST HTTP responses send though localhost.
 - Authenticate class is where the functions to authenticate the password is used.
 - ResponseGenerator class creates the hash to secure user created passwords as java does not contain a BCRYPT library.
 
+---> Using Maven and Docker were able to launch multiple copies of webserver for deployment.
+
+---> Multimedia contains the images used for the site
 ---> Lastly, the public folder holds all the html, css, and js files which we are hosting on our server.
 
 --------------------------------------------------
