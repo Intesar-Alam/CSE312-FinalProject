@@ -967,21 +967,20 @@ public class Webserver {
 	}
 	
 	/**
-	 * From Alam HW 5
+	 * From Alam HW5
 	 * Method takes a string and adds it into a new document as a new line.
 	 * @param String to be added to the document?
 	 * @param The file that the string is being added to 
 	 * @throws IOException 
 	 */
 	private static void addToDocument(String string, File txtFile) throws IOException {
-		StatusUpdate post = new StatusUpdate(string);
-		publicPosts.add(post);
+		formList.add(string);
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(txtFile));
-		for(StatusUpdate s : publicPosts) {
-			String str = s.getCSV();
-			bufferedWriter.write(str);
+		for(String s : formList) {
+			bufferedWriter.write(s);
 			bufferedWriter.newLine();
 		}
+		bufferedWriter.flush();
 		bufferedWriter.close();
 		
 	}
