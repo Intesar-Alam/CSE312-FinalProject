@@ -108,9 +108,10 @@ public class Webserver {
         while(true){
             try(Socket socket = server.accept())
             {
-            	//Creating the input and streams via the socket.
+            	//Creating the input and output streams via the socket.
             	inStream = socket.getInputStream();
 	            breader = new BufferedReader(new InputStreamReader(inStream));
+	            stream = new PrintStream(socket.getOutputStream());
 		        
 	            //Reads request send from the client browser.
 				readRequest();
@@ -141,410 +142,410 @@ public class Webserver {
                  * TODO Terences code below
                  */
 				
-		        ClientsInformation temp = new ClientsInformation();
-		        temp.update(breader);
-		        String request = temp.getRequest();
-		        
-		        Authenticate authenticate = new Authenticate(breader);
-		        ArrayList<String> userData = authenticate.getUserData();
-		        
-		        PrintStream ps = new PrintStream(socket.getOutputStream());
-		        OutPrintStream test = new OutPrintStream();
-
-		        HashMap<String,String> info = temp.getHashMap();
-		        String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-		        String websocketkey = "";
-		        
-			 	File folder = new File("Multimedia_Content/");
-			 	 
-
-		        HashMap<String,Integer> votes = new HashMap<String,Integer>();
-		        String[] files = folder.list();
-		        for(int i = 0; i < files.length; i++)
-		        {
-		        	votes.put(files[i], 0);
-		        }
-		        
-		        ArrayList<String> filename = new ArrayList<String>();
-		 
-		        for (String filenum : files)
-		        {
-		            filename.add(filenum);
-		        }
-		        
-		        
-		        if(info.containsKey("Sec-WebSocket-Key"))
-		        {
-		        	websocketkey = info.get("Sec-WebSocket-Key");
-		        }
-		        
-		        if((request.contains("/upvote")))
-		        {
-		        	String holder = request;
-		        	String[] tempholder = holder.split("/upvote");
-		        	int value = Integer.parseInt(tempholder[1]);
-		        	value++;
-		        	String retval = Integer.toString(value);
-		        	ps.write(retval.getBytes("UTF-8"));
-		        }
-		        if((request.contains("/downvote")))
-		        {
-		        	String holder = request;
-		        	String[] tempholder = holder.split("/downvote");
-		        	int value = Integer.parseInt(tempholder[1]);
-		        	value--;
-		        	String retval = Integer.toString(value);
-		        	ps.write(retval.getBytes("UTF-8"));
-		        }
-		        
-		        if((request.compareTo("/") == 0) || (request.compareTo("/index.html") == 0))
-			    {
-		        	String s = "public/index.html";
-					File file = new File(s);
-		 	        Scanner sc2 = new Scanner(file); 
-		 	       	String outputString = "";
-		 	        
-		 	        while (sc2.hasNextLine()) 
-		 	        {
-		 	        	String temp8 = sc2.nextLine();
-		 	        	outputString += (temp8); 
-		 	        }
-		 	        test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-		 	        ps.write(outputString.getBytes("UTF-8"));
-		 	        sc2.close();
-			    }
-		        if((request.compareTo("/login") == 0))
-		        {
-		        	String r = "";
-		        	String outputString = "";
-		        	
-		        	if(userData.isEmpty() || userData.size() != 2) {
-						r = "You must enter both fields. Please try again.";
-						outputString += "HTTP/1.1 200 OK\r\n";
-						outputString += "Content-Type: text/plain\r\n";
-						outputString += "Content-Length: " + r.length();
-						outputString += "\r\n\r\n" + r;
-					}
-		        	else {
-						if(authenticate.doesUserExist(userData.get(0), "public/accountinfo.csv")) {
-							if(authenticate.isPasswordCorrect(userData.get(1), "public/accountinfo.csv")) {
-								outputString += "HTTP/1.1 301 MOVED PERMANENTLY\r\n";
-								outputString += "Content-Type: text/html\r\n";
-								outputString += "Location: /index.html";
-								outputString += "\r\n\r\n";
-							}
-							else {
-								r = "This password is incorrect. Please try again.";
-								outputString += "HTTP/1.1 200 OK\r\n";
-								outputString += "Content-Type: text/plain\r\n";
-								outputString += "Content-Length: " + r.length();
-								outputString += "\r\n\r\n" + r;
-							}
-						}
-						else {
-							r = "This username does not exist. Please try again.";
-							outputString += "HTTP/1.1 200 OK\r\n";
-							outputString += "Content-Type: text/plain\r\n";
-							outputString += "Content-Length: " + r.length();
-							outputString += "\r\n\r\n" + r;
-						}
-					}
-		        	
-		        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-		 	        ps.write(outputString.getBytes("UTF-8"));
-		        }
-		        if((request.compareTo("/registration.html") == 0)) {
-		        	String s = "public/registration.html";
-					File file = new File(s);
-		 	        Scanner sc2 = new Scanner(file); 
-		 	       	String outputString = "";
-		 	        
-		 	        while (sc2.hasNextLine()) 
-		 	        {
-		 	        	String temp8 = sc2.nextLine();
-		 	        	outputString += (temp8); 
-		 	        }
-		 	        test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-		 	        ps.write(outputString.getBytes("UTF-8"));
-		 	        sc2.close();
-				}
-		        if((request.compareTo("/registration") == 0)) {
-		        	String r = "";
-		        	String outputString = "";
-		        	
-		        	if(userData.isEmpty() || userData.size() != 2) {
-						r = "You must enter both fields. Please try again.";
-						outputString += "HTTP/1.1 200 OK\r\n";
-						outputString += "Content-Type: text/plain\r\n";
-						outputString += "Content-Length: " + r.length();
-						outputString += "\r\n\r\n" + r;
-					}
-		        	else {
-		        		if(authenticate.isUsernameValid(userData.get(0), "public/accountinfo.csv")) {
-							if(authenticate.isPasswordValid(userData.get(1))) {
-								byte[] salt = authenticate.getSalt();
-//								byte[] token = authenticate.getToken("public/accountinfo.csv");
-								String newPassword = authenticate.getSecurePassword(userData.get(1), salt);
-								userData.set(1, newPassword);
-								userData.add(Base64.getEncoder().encodeToString(salt));
-//								userData.add(Base64.getEncoder().encodeToString(token));
-								authenticate.toData("public/accountinfo.csv", userData);
-								
-								outputString += "HTTP/1.1 301 MOVED PERMANENTLY\r\n";
-								outputString += "Content-Type: text/html\r\n";
-								outputString += "Location: /index.html";
-								outputString += "\r\n\r\n";
-							}
-							else {
-								r = "";
-								ArrayList<String> t = authenticate.getReqNotMet();
-								for(int i = 0; i < t.size(); i++) {
-									r = r + t.get(i) + "\r\n";
-								}
-								outputString += "HTTP/1.1 200 OK\r\n";
-								outputString += "Content-Type: text/plain\r\n";
-								outputString += "Content-Length: " + r.length();
-								outputString += "\r\n\r\n" + r;
-							}
-						}
-		        		else {
-		        			r = "";
-							ArrayList<String> t = authenticate.getReqNotMet();
-							for(int i = 0; i < t.size(); i++) {
-								r = r + t.get(i) + "\r\n";
-							}
-							outputString += "HTTP/1.1 200 OK\r\n";
-							outputString += "Content-Type: text/plain\r\n";
-							outputString += "Content-Length: " + r.length();
-							outputString += "\r\n\r\n" + r;
-						}
-		        	}
-		        	
-		        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-		 	        ps.write(outputString.getBytes("UTF-8"));
-				}
-		        if((request.compareTo("/basic.css") == 0))
-		        {
-		        	File file = new File("public/basic.css");
-		        	
-	 	        	Scanner sc2 = new Scanner(file); 
-	 	        	String outputString = "";
-	 	        	
-	 	        	while (sc2.hasNextLine()) 
-	 	        	{
-	 	        		String temp8 = sc2.nextLine();
-	 	        		outputString += (temp8); 
-	 	        	}
-	 	        	
-	 	        	test.printStreamGoodCSS(ps, outputString.getBytes("UTF-8").length);
-	 	        	ps.write(outputString.getBytes("UTF-8"));
-	 	        	sc2.close();
-		        }
-		        if((request.compareTo("/home.html") == 0))
-		        {
-		        	File file = new File("public/home.html"); 
-	 	        	Scanner sc2 = new Scanner(file); 
-	 	        	String outputString = "";
-	 	        	
-	 	        	while (sc2.hasNextLine()) 
-	 	        	{
-	 	        		String temp8 = sc2.nextLine();
-	 	        		outputString += (temp8); 
-	 	        	}
-	 	        	
-	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-	 	        	ps.write(outputString.getBytes("UTF-8"));
-	 	        	sc2.close();
-		        }
-		        if((request.compareTo("/profile.html") == 0))
-		        {
-		        	File file = new File("public/profile.html"); 
-		        	Scanner sc2 = new Scanner(file);
-				 	String outputString = "";
-					while (sc2.hasNextLine()) 
-					{
-						String temp8 = sc2.nextLine();
-						if(temp8.contains("{{ personPosts }}"))
-						{
-							for(int i = 0; i < filename.size(); i++)
-							{
-								outputString += "<img src=\"" + filename.get(i) + "\"" + "    <li class=\"vote\">\r\n" + 
-										"      <button class=\"upclick\" onclick=\"upvote(" +  i + ")\">up Vote</button>\r\n" + 
-										"      <span id=\"currVotes" + i + "\" id=>" + votes.get(filename.get(i)) +"</span>\r\n" + 
-										"      <button class=\"downclick\" onclick=\"downvote(" + i + ")\">down Vote</button>\r\n" + 
-										"      <a>{{ title }}</a>\r\n" + 
-										"    </li>";
-							}
-						}
-						else
-							outputString += (temp8) + "\r\n"; 
-					}
-		 	        
-		 	        test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-		 	        ps.write(outputString.getBytes("UTF-8"));
-		 	        sc2.close();
-		        }
-		        
-		        /*
-		         * For the multimedia makes public post
-		         * 
-		         * TODO add to document when post command is working 
-		         */
-		        if(request.compareTo("/addStatus") == 0){
-
-		        /** TODO make sure data is added **/
-		        	String idx = "publicFiles/info.txt";
-					String fileData = readTextData2(idx);
-		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n\r\n";
-		        	outputString = "Content-Length: " + fileData.length() + "\r\n\r\n" + fileData;
-					ps.write(outputString.getBytes("UTF-8"));
-		        }
-		        
-		        /*
-		         * To request all posts
-		         */
-		        if(request.compareTo("/statusUpdate") == 0) {
-		        	String idx = "public/posts.txt";
-					String fileData = readTextData2(idx);
-		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n";
-					outputString += "Content-Length: " + (fileData.length()) +"\r\n\r\n" + fileData;
-					ps.write(outputString.getBytes("UTF-8"));
-		        }
-		        
-		        for(int i = 0; i < filename.size(); i++)
-		        {
-		        	if(request.contains(filename.get(i)))
-		        	{
-			        	String tempstester[] = request.split("/");
-						String actualrequest2 = tempstester[1];
-						
-			            File image = new File("Multimedia_Content/" + actualrequest2);
-						if(!image.exists())
-						{
-							ps.write("Image file name does not exist".getBytes("UTF-8"));
-						}
-						else
-						{
-					        BufferedImage bufferimage = ImageIO.read(image);
-				            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-				            ImageIO.write(bufferimage, "png", byteArrayOutputStream);
-		
-				            int size = byteArrayOutputStream.toByteArray().length;
-				            
-				            test.printStreamGoodimg(ps, size);
-				            
-				            ps.write(byteArrayOutputStream.toByteArray());
-				            
-				            ps.flush();
-						}
-		        	}
-		        }
-		        if((request.compareTo("friends.html") == 0)) {
-		        	File csvfile = new File("public/accountinfo.csv");
-		        	Scanner scan = new Scanner(csvfile);
-		        	String usernames = "These are our other users </br>";
-		        	
-		        	while (scan.hasNextLine()) {
-		        		String accountinfo = scan.nextLine();
-		        		String [] ainfo = accountinfo.split(",");
-		        		usernames = usernames + ainfo[0] + "</br>";
-		        	}
-		        	
-		        	File file = new File("public/friends.html"); 
-	 	        	Scanner sc2 = new Scanner(file); 
-	 	        	String outputString = "";
-	 	        	
-	 	        	while (sc2.hasNextLine()) 
-	 	        	{
-	 	        		String temp8 = sc2.nextLine();
-	 	        		if (temp8.contains("{{ add friends }}")) {
-	 	        			temp8.replace("{{ add friends }}", usernames);
-	 	        		}
-	 	        		outputString += (temp8); 
-	 	        	}
-	 	        	
-	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-	 	        	ps.write(outputString.getBytes("UTF-8"));
-	 	        	sc2.close();
-		        }
-		        if((request.compareTo("/dmtemplate.html") == 0))
-		        {
-		        	File file = new File("public/dmtemplate.html"); 
-	 	        	Scanner sc2 = new Scanner(file); 
-	 	        	String outputString = "";
-	 	        	
-	 	        	while (sc2.hasNextLine()) 
-	 	        	{
-	 	        		String temp8 = sc2.nextLine();
-	 	        		outputString += (temp8); 
-	 	        	}
-	 	        	
-	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
-	 	        	ps.write(outputString.getBytes("UTF-8"));
-	 	        	sc2.close();
-		        }
-		        if((request.compareTo("/script2.js") == 0))
-		        {
-		        	File file = new File("public/script2.js"); 
-	 	        	Scanner sc2 = new Scanner(file); 
-	 	        	String outputString = "";
-	 	        	
-	 	        	while (sc2.hasNextLine()) 
-	 	        	{
-	 	        		String temp8 = sc2.nextLine();
-	 	        		outputString += (temp8); 
-	 	        	}
-	 	        	
-	 	        	test.printStreamGoodJS(ps, outputString.getBytes("UTF-8").length);
-	 	        	ps.write(outputString.getBytes("UTF-8"));
-	 	        	sc2.close();
-		        }
-		        if((request.compareTo("/mountain.jpeg") == 0))
-		        {
-		        	String tempstest[] = request.split("/");
-					String actualrequest = tempstest[1];
-					
-		            File image = new File("public/" + actualrequest);
-					if(!image.exists())
-					{
-						ps.write("Image file name does not exist".getBytes("UTF-8"));
-					}
-					else
-					{
-				        BufferedImage bufferimage = ImageIO.read(image);
-			            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			            ImageIO.write(bufferimage, "jpg", byteArrayOutputStream);
-	
-			            int size = byteArrayOutputStream.toByteArray().length;
-			            
-			            test.printStreamGoodimg(ps, size);
-			            
-			            ps.write(byteArrayOutputStream.toByteArray());
-			            
-			            ps.flush();
-					}
-		        }
-		        if((request.compareTo("/socket") == 0))
-		        {
-		            clients.add(socket);
-		            
-		        	byte[] response = ("HTTP/1.1 101 Switching Protocol\r\n" + 
-				        "Connection: Upgrade\r\n" + 
-				        "Upgrade: websocket\r\n" + 
-				        "Sec-WebSocket-Accept: " +
-				        Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1").digest((websocketkey + GUID).getBytes("UTF-8"))) + 
-				        "\r\n\r\n").getBytes("UTF-8");
-		        	ps.write(response);
-		        }
-		        
-		        for(int i = 0; i < clients.size(); i++)
-		        {
-		            Websocket temptest = new Websocket();
-		            
-		            temptest.socket(clients.get(i));
-		        }
-		        
-		        ps.close();
+//		        ClientsInformation temp = new ClientsInformation();
+//		        temp.update(breader);
+//		        String request = temp.getRequest();
+//		        
+//		        Authenticate authenticate = new Authenticate(breader);
+//		        ArrayList<String> userData = authenticate.getUserData();
+//		        
+//		        PrintStream ps = new PrintStream(socket.getOutputStream());
+//		        OutPrintStream test = new OutPrintStream();
+//
+//		        HashMap<String,String> info = temp.getHashMap();
+//		        String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+//		        String websocketkey = "";
+//		        
+//			 	File folder = new File("Multimedia_Content/");
+//			 	 
+//
+//		        HashMap<String,Integer> votes = new HashMap<String,Integer>();
+//		        String[] files = folder.list();
+//		        for(int i = 0; i < files.length; i++)
+//		        {
+//		        	votes.put(files[i], 0);
+//		        }
+//		        
+//		        ArrayList<String> filename = new ArrayList<String>();
+//		 
+//		        for (String filenum : files)
+//		        {
+//		            filename.add(filenum);
+//		        }
+//		        
+//		        
+//		        if(info.containsKey("Sec-WebSocket-Key"))
+//		        {
+//		        	websocketkey = info.get("Sec-WebSocket-Key");
+//		        }
+//		        
+//		        if((request.contains("/upvote")))
+//		        {
+//		        	String holder = request;
+//		        	String[] tempholder = holder.split("/upvote");
+//		        	int value = Integer.parseInt(tempholder[1]);
+//		        	value++;
+//		        	String retval = Integer.toString(value);
+//		        	ps.write(retval.getBytes("UTF-8"));
+//		        }
+//		        if((request.contains("/downvote")))
+//		        {
+//		        	String holder = request;
+//		        	String[] tempholder = holder.split("/downvote");
+//		        	int value = Integer.parseInt(tempholder[1]);
+//		        	value--;
+//		        	String retval = Integer.toString(value);
+//		        	ps.write(retval.getBytes("UTF-8"));
+//		        }
+//		        
+//		        if((request.compareTo("/") == 0) || (request.compareTo("/index.html") == 0))
+//			    {
+//		        	String s = "public/index.html";
+//					File file = new File(s);
+//		 	        Scanner sc2 = new Scanner(file); 
+//		 	       	String outputString = "";
+//		 	        
+//		 	        while (sc2.hasNextLine()) 
+//		 	        {
+//		 	        	String temp8 = sc2.nextLine();
+//		 	        	outputString += (temp8); 
+//		 	        }
+//		 	        test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+//		 	        ps.write(outputString.getBytes("UTF-8"));
+//		 	        sc2.close();
+//			    }
+//		        if((request.compareTo("/login") == 0))
+//		        {
+//		        	String r = "";
+//		        	String outputString = "";
+//		        	
+//		        	if(userData.isEmpty() || userData.size() != 2) {
+//						r = "You must enter both fields. Please try again.";
+//						outputString += "HTTP/1.1 200 OK\r\n";
+//						outputString += "Content-Type: text/plain\r\n";
+//						outputString += "Content-Length: " + r.length();
+//						outputString += "\r\n\r\n" + r;
+//					}
+//		        	else {
+//						if(authenticate.doesUserExist(userData.get(0), "public/accountinfo.csv")) {
+//							if(authenticate.isPasswordCorrect(userData.get(1), "public/accountinfo.csv")) {
+//								outputString += "HTTP/1.1 301 MOVED PERMANENTLY\r\n";
+//								outputString += "Content-Type: text/html\r\n";
+//								outputString += "Location: /index.html";
+//								outputString += "\r\n\r\n";
+//							}
+//							else {
+//								r = "This password is incorrect. Please try again.";
+//								outputString += "HTTP/1.1 200 OK\r\n";
+//								outputString += "Content-Type: text/plain\r\n";
+//								outputString += "Content-Length: " + r.length();
+//								outputString += "\r\n\r\n" + r;
+//							}
+//						}
+//						else {
+//							r = "This username does not exist. Please try again.";
+//							outputString += "HTTP/1.1 200 OK\r\n";
+//							outputString += "Content-Type: text/plain\r\n";
+//							outputString += "Content-Length: " + r.length();
+//							outputString += "\r\n\r\n" + r;
+//						}
+//					}
+//		        	
+//		        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+//		 	        ps.write(outputString.getBytes("UTF-8"));
+//		        }
+//		        if((request.compareTo("/registration.html") == 0)) {
+//		        	String s = "public/registration.html";
+//					File file = new File(s);
+//		 	        Scanner sc2 = new Scanner(file); 
+//		 	       	String outputString = "";
+//		 	        
+//		 	        while (sc2.hasNextLine()) 
+//		 	        {
+//		 	        	String temp8 = sc2.nextLine();
+//		 	        	outputString += (temp8); 
+//		 	        }
+//		 	        test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+//		 	        ps.write(outputString.getBytes("UTF-8"));
+//		 	        sc2.close();
+//				}
+//		        if((request.compareTo("/registration") == 0)) {
+//		        	String r = "";
+//		        	String outputString = "";
+//		        	
+//		        	if(userData.isEmpty() || userData.size() != 2) {
+//						r = "You must enter both fields. Please try again.";
+//						outputString += "HTTP/1.1 200 OK\r\n";
+//						outputString += "Content-Type: text/plain\r\n";
+//						outputString += "Content-Length: " + r.length();
+//						outputString += "\r\n\r\n" + r;
+//					}
+//		        	else {
+//		        		if(authenticate.isUsernameValid(userData.get(0), "public/accountinfo.csv")) {
+//							if(authenticate.isPasswordValid(userData.get(1))) {
+//								byte[] salt = authenticate.getSalt();
+////								byte[] token = authenticate.getToken("public/accountinfo.csv");
+//								String newPassword = authenticate.getSecurePassword(userData.get(1), salt);
+//								userData.set(1, newPassword);
+//								userData.add(Base64.getEncoder().encodeToString(salt));
+////								userData.add(Base64.getEncoder().encodeToString(token));
+//								authenticate.toData("public/accountinfo.csv", userData);
+//								
+//								outputString += "HTTP/1.1 301 MOVED PERMANENTLY\r\n";
+//								outputString += "Content-Type: text/html\r\n";
+//								outputString += "Location: /index.html";
+//								outputString += "\r\n\r\n";
+//							}
+//							else {
+//								r = "";
+//								ArrayList<String> t = authenticate.getReqNotMet();
+//								for(int i = 0; i < t.size(); i++) {
+//									r = r + t.get(i) + "\r\n";
+//								}
+//								outputString += "HTTP/1.1 200 OK\r\n";
+//								outputString += "Content-Type: text/plain\r\n";
+//								outputString += "Content-Length: " + r.length();
+//								outputString += "\r\n\r\n" + r;
+//							}
+//						}
+//		        		else {
+//		        			r = "";
+//							ArrayList<String> t = authenticate.getReqNotMet();
+//							for(int i = 0; i < t.size(); i++) {
+//								r = r + t.get(i) + "\r\n";
+//							}
+//							outputString += "HTTP/1.1 200 OK\r\n";
+//							outputString += "Content-Type: text/plain\r\n";
+//							outputString += "Content-Length: " + r.length();
+//							outputString += "\r\n\r\n" + r;
+//						}
+//		        	}
+//		        	
+//		        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+//		 	        ps.write(outputString.getBytes("UTF-8"));
+//				}
+//		        if((request.compareTo("/basic.css") == 0))
+//		        {
+//		        	File file = new File("public/basic.css");
+//		        	
+//	 	        	Scanner sc2 = new Scanner(file); 
+//	 	        	String outputString = "";
+//	 	        	
+//	 	        	while (sc2.hasNextLine()) 
+//	 	        	{
+//	 	        		String temp8 = sc2.nextLine();
+//	 	        		outputString += (temp8); 
+//	 	        	}
+//	 	        	
+//	 	        	test.printStreamGoodCSS(ps, outputString.getBytes("UTF-8").length);
+//	 	        	ps.write(outputString.getBytes("UTF-8"));
+//	 	        	sc2.close();
+//		        }
+//		        if((request.compareTo("/home.html") == 0))
+//		        {
+//		        	File file = new File("public/home.html"); 
+//	 	        	Scanner sc2 = new Scanner(file); 
+//	 	        	String outputString = "";
+//	 	        	
+//	 	        	while (sc2.hasNextLine()) 
+//	 	        	{
+//	 	        		String temp8 = sc2.nextLine();
+//	 	        		outputString += (temp8); 
+//	 	        	}
+//	 	        	
+//	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+//	 	        	ps.write(outputString.getBytes("UTF-8"));
+//	 	        	sc2.close();
+//		        }
+//		        if((request.compareTo("/profile.html") == 0))
+//		        {
+//		        	File file = new File("public/profile.html"); 
+//		        	Scanner sc2 = new Scanner(file);
+//				 	String outputString = "";
+//					while (sc2.hasNextLine()) 
+//					{
+//						String temp8 = sc2.nextLine();
+//						if(temp8.contains("{{ personPosts }}"))
+//						{
+//							for(int i = 0; i < filename.size(); i++)
+//							{
+//								outputString += "<img src=\"" + filename.get(i) + "\"" + "    <li class=\"vote\">\r\n" + 
+//										"      <button class=\"upclick\" onclick=\"upvote(" +  i + ")\">up Vote</button>\r\n" + 
+//										"      <span id=\"currVotes" + i + "\" id=>" + votes.get(filename.get(i)) +"</span>\r\n" + 
+//										"      <button class=\"downclick\" onclick=\"downvote(" + i + ")\">down Vote</button>\r\n" + 
+//										"      <a>{{ title }}</a>\r\n" + 
+//										"    </li>";
+//							}
+//						}
+//						else
+//							outputString += (temp8) + "\r\n"; 
+//					}
+//		 	        
+//		 	        test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+//		 	        ps.write(outputString.getBytes("UTF-8"));
+//		 	        sc2.close();
+//		        }
+//		        
+//		        /*
+//		         * For the multimedia makes public post
+//		         * 
+//		         * TODO add to document when post command is working 
+//		         */
+//		        if(request.compareTo("/addStatus") == 0){
+//
+//		        /** TODO make sure data is added **/
+//		        	String idx = "publicFiles/info.txt";
+//					String fileData = readTextData2(idx);
+//		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n\r\n";
+//		        	outputString = "Content-Length: " + fileData.length() + "\r\n\r\n" + fileData;
+//					ps.write(outputString.getBytes("UTF-8"));
+//		        }
+//		        
+//		        /*
+//		         * To request all posts
+//		         */
+//		        if(request.compareTo("/statusUpdate") == 0) {
+//		        	String idx = "public/posts.txt";
+//					String fileData = readTextData2(idx);
+//		        	String outputString = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/plain\r\n";
+//					outputString += "Content-Length: " + (fileData.length()) +"\r\n\r\n" + fileData;
+//					ps.write(outputString.getBytes("UTF-8"));
+//		        }
+//		        
+//		        for(int i = 0; i < filename.size(); i++)
+//		        {
+//		        	if(request.contains(filename.get(i)))
+//		        	{
+//			        	String tempstester[] = request.split("/");
+//						String actualrequest2 = tempstester[1];
+//						
+//			            File image = new File("Multimedia_Content/" + actualrequest2);
+//						if(!image.exists())
+//						{
+//							ps.write("Image file name does not exist".getBytes("UTF-8"));
+//						}
+//						else
+//						{
+//					        BufferedImage bufferimage = ImageIO.read(image);
+//				            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//				            ImageIO.write(bufferimage, "png", byteArrayOutputStream);
+//		
+//				            int size = byteArrayOutputStream.toByteArray().length;
+//				            
+//				            test.printStreamGoodimg(ps, size);
+//				            
+//				            ps.write(byteArrayOutputStream.toByteArray());
+//				            
+//				            ps.flush();
+//						}
+//		        	}
+//		        }
+//		        if((request.compareTo("friends.html") == 0)) {
+//		        	File csvfile = new File("public/accountinfo.csv");
+//		        	Scanner scan = new Scanner(csvfile);
+//		        	String usernames = "These are our other users </br>";
+//		        	
+//		        	while (scan.hasNextLine()) {
+//		        		String accountinfo = scan.nextLine();
+//		        		String [] ainfo = accountinfo.split(",");
+//		        		usernames = usernames + ainfo[0] + "</br>";
+//		        	}
+//		        	
+//		        	File file = new File("public/friends.html"); 
+//	 	        	Scanner sc2 = new Scanner(file); 
+//	 	        	String outputString = "";
+//	 	        	
+//	 	        	while (sc2.hasNextLine()) 
+//	 	        	{
+//	 	        		String temp8 = sc2.nextLine();
+//	 	        		if (temp8.contains("{{ add friends }}")) {
+//	 	        			temp8.replace("{{ add friends }}", usernames);
+//	 	        		}
+//	 	        		outputString += (temp8); 
+//	 	        	}
+//	 	        	
+//	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+//	 	        	ps.write(outputString.getBytes("UTF-8"));
+//	 	        	sc2.close();
+//		        }
+//		        if((request.compareTo("/dmtemplate.html") == 0))
+//		        {
+//		        	File file = new File("public/dmtemplate.html"); 
+//	 	        	Scanner sc2 = new Scanner(file); 
+//	 	        	String outputString = "";
+//	 	        	
+//	 	        	while (sc2.hasNextLine()) 
+//	 	        	{
+//	 	        		String temp8 = sc2.nextLine();
+//	 	        		outputString += (temp8); 
+//	 	        	}
+//	 	        	
+//	 	        	test.printStreamGoodHTML(ps, outputString.getBytes("UTF-8").length);
+//	 	        	ps.write(outputString.getBytes("UTF-8"));
+//	 	        	sc2.close();
+//		        }
+//		        if((request.compareTo("/script2.js") == 0))
+//		        {
+//		        	File file = new File("public/script2.js"); 
+//	 	        	Scanner sc2 = new Scanner(file); 
+//	 	        	String outputString = "";
+//	 	        	
+//	 	        	while (sc2.hasNextLine()) 
+//	 	        	{
+//	 	        		String temp8 = sc2.nextLine();
+//	 	        		outputString += (temp8); 
+//	 	        	}
+//	 	        	
+//	 	        	test.printStreamGoodJS(ps, outputString.getBytes("UTF-8").length);
+//	 	        	ps.write(outputString.getBytes("UTF-8"));
+//	 	        	sc2.close();
+//		        }
+//		        if((request.compareTo("/mountain.jpeg") == 0))
+//		        {
+//		        	String tempstest[] = request.split("/");
+//					String actualrequest = tempstest[1];
+//					
+//		            File image = new File("public/" + actualrequest);
+//					if(!image.exists())
+//					{
+//						ps.write("Image file name does not exist".getBytes("UTF-8"));
+//					}
+//					else
+//					{
+//				        BufferedImage bufferimage = ImageIO.read(image);
+//			            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//			            ImageIO.write(bufferimage, "jpg", byteArrayOutputStream);
+//	
+//			            int size = byteArrayOutputStream.toByteArray().length;
+//			            
+//			            test.printStreamGoodimg(ps, size);
+//			            
+//			            ps.write(byteArrayOutputStream.toByteArray());
+//			            
+//			            ps.flush();
+//					}
+//		        }
+//		        if((request.compareTo("/socket") == 0))
+//		        {
+//		            clients.add(socket);
+//		            
+//		        	byte[] response = ("HTTP/1.1 101 Switching Protocol\r\n" + 
+//				        "Connection: Upgrade\r\n" + 
+//				        "Upgrade: websocket\r\n" + 
+//				        "Sec-WebSocket-Accept: " +
+//				        Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1").digest((websocketkey + GUID).getBytes("UTF-8"))) + 
+//				        "\r\n\r\n").getBytes("UTF-8");
+//		        	ps.write(response);
+//		        }
+//		        
+//		        for(int i = 0; i < clients.size(); i++)
+//		        {
+//		            Websocket temptest = new Websocket();
+//		            
+//		            temptest.socket(clients.get(i));
+//		        }
+//		        
+//		        ps.close();
 		        breader.close();
 		        inStream.close();
             }
@@ -562,7 +563,10 @@ public class Webserver {
 		//Reads the first line. Of the Get Request (ie. "GET /index HTTP/1.1")
 		input = breader.readLine();
 		System.out.println("\nThe client submitted:\n" + input); 
-		if(input.contains("GET")) {
+		if (input == null) {
+			System.out.println("\nThe System failed due to a null request\n");
+			response = new GetResponse("GET /404 HTTP/1.1");
+		}else if(input.contains("GET")) {
 			makeGETResponse();
 		}else if(input.contains("POST")) {
 			makePOSTResponse();
@@ -687,8 +691,117 @@ public class Webserver {
 	}
 
 
-	private static boolean handlePOSTRequest() {
-		// TODO Auto-generated method stub
+	/**
+	 * Alam HW8
+	 * Handles POST request based on the type and destination.
+	 * @return true if it is handling an image false otherwise.
+	 * @throws IOException 
+	 */
+	private static boolean handlePOSTRequest() throws IOException {
+		String path = response.getPath();
+		String fileData = "";
+		boolean attempt = true;
+		
+		
+		System.out.println("The path being searched for is :" + path);
+		if(path.endsWith("/registration")) {
+			String warning = "Account failed: ";
+			ArrayList<String> up = ((PostResponse) response).getRawData();
+			System.out.println("!!!!!up.size() is " + up.size() + " !!!!");
+			if (up.size() != 2) { 
+				attempt = false; 
+				warning += "It did not contain all required fields. ";
+			}else{
+				if(up.get(1).length() < 8) {
+					attempt = false; 
+					warning += "The password is too short. ";
+				}if(!Authenticate.containsLcase(up.get(1))) {
+					attempt = false; 
+					warning += "The password doesn't contain a lowercase. ";
+				}if(!Authenticate.containsUcase(up.get(1))) {
+					attempt = false; 
+					warning += "The password doesn't contain an uppercase. ";
+				}if(!Authenticate.containsNum(up.get(1))) {
+					attempt = false; 	
+					warning += "The password doesn't contain a number. ";
+				}if(!Authenticate.containsSpecial(up.get(1))) {
+					attempt = false; 
+					warning += "The password doesn't contain a special character. ";
+				}if(userpass.containsKey(up.get(0))) {
+					attempt = false; 
+					warning += "The username is already teken. ";
+				}
+			}
+			
+			if(attempt) {
+				String user = up.get(0);
+				String pass = up.get(1);
+				String salt = ResponseGenerator.generateSalt();
+				String saltedPass = ResponseGenerator.generateHash(pass, salt);
+				String token = ResponseGenerator.generateSalt();
+				userpass.put(user, saltedPass);
+				usersalt.put(user, salt);
+				usertoke.put(user, token);
+				userexit.put(user, false);
+				csvWriter();
+				
+				output += STATUS200 + TEXTHTML + NO_SNIFF; 
+				fileData = readFileData("public/index.html");
+				fileData = fileDataAddAlert(fileData, "Account created, please login now!");
+				output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
+			}else {
+				output += STATUS200 + TEXTHTML + NO_SNIFF; 
+				fileData = readFileData("public/registration.html");
+				fileData = fileDataAddAlert(fileData, warning);
+				output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
+			}
+			return false;
+			
+		}else if(path.endsWith("/login")) {
+			String warning = "Incorrect login please try again: ";
+		
+			ArrayList<String> up = ((PostResponse) response).getRawData();
+			System.out.println("!!!!!up.size() is " + up.size() + " !!!!");
+			if (up.size() != 2) { 
+				attempt = false; 
+				warning += "It did not contain all required fields. ";
+			}else {
+				String user = up.get(0);
+				String pass = up.get(1);
+				if (!userpass.containsKey(user)) {
+					attempt = false; 
+					warning += "Username does not exist. ";
+				}else{
+					String salt = usersalt.get(user);
+					String hash = ResponseGenerator.generateHash(pass, salt);
+					System.out.println("\n  Log in hash: " + hash + "\n  Stored hash: " + userpass.get(user));
+					if(!(userpass.get(user).equals(hash))) {
+						System.out.println("submitted and stored hash don't match");
+						attempt = false; 
+						warning += "Password is incorrect. ";
+					}else{
+						System.out.println("submitted and stored hash do match!");
+					}
+				}
+			}
+			
+			if(attempt) {
+				output += STATUS200 + TEXTHTML + NO_SNIFF; 
+				fileData = readFileTemp("public/home.html", "{{ User }}", up.get(0) );
+				output += "Set-Cookie: user=" + usertoke.get(up.get(0)) + ";\r\n";
+				output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
+			}else {
+				output += STATUS200 + TEXTHTML + NO_SNIFF; 
+				fileData = readFileData("public/index.html");
+				fileData = fileDataAddAlert(fileData, warning);
+				output += CONTENTL + fileData.length() + "\r\n\r\n" + fileData;
+			}
+			
+		}
+
+		output += STATUS501 + TEXTHTML + NO_SNIFF;
+		output += "\r\n <h1>Error 501</h1><br /><b>Looks like you're in the future buddy.<br />This functionality hasn't been implemented yet, sorry :(</b><br />"
+		+ "Page not created on server: " + port+ " at: " + timestamp;
 		return false;
 	}
 
@@ -911,6 +1024,26 @@ public class Webserver {
 	}
 	
 	/**
+	 * Alam HW8
+	 * Writes all csv files from the hashmaps from previous 
+	 * @throws IOException 
+	 */
+	private static void csvWriter() throws IOException {
+		//csvReader();
+		for(String user: userpass.keySet()) {
+			if (!userexit.get(user)){
+				String temp = user + "," + userpass.get(user) + "," + usersalt.get(user) + "," + usertoke.get(user);
+				addToDocument(temp, csvData);
+				userexit.put(user, true);
+				System.out.println("now added user: " + user);
+			}else {
+				System.out.println("user " + user + " was already added");
+			}
+		}
+		
+	}
+	
+	/**
 	 * Alam HW 8
 	 * Initializes all the key search words for the pages stored on the server.
 	 */
@@ -921,7 +1054,7 @@ public class Webserver {
 		webList.put("/home.html","public/home.html");
 		webList.put("/registration.html","public/registration.html");
 		webList.put("/dmtemplate.html","public/dmtemplate.html");
-		webList.put("/friends.html","public/friend.html");	
+		webList.put("/friends.html","public/friends.html");	
 		webList.put("/messages.html","public/messages.html");
 		webList.put("/profile.html","public/profile.html");
 		

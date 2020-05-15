@@ -14,16 +14,32 @@
 
 <body>
 
-	<div id="formboxidx"><form action="/login" method="post" enctype="multipart/form-data">
-      <label for="username">Username:</label><br>
-      <input type="text" placeholder="Enter Username" name="username"><br>
-      <label for="password">Password:</label><br>
-      <input type="password" placeholder="Enter Password" name="password"><br><br>
-      <input type="submit" name="Enter" value="Submit">
-    </form>
-
+	<div id="formboxidx">
+		<!--
+		<form action="/login" method="post" enctype="multipart/form-data">
+    		<label for="username">Username:</label><br>
+     		<input type="text" placeholder="Enter Username" name="username"><br>
+     		
+     		<label for="password">Password:</label><br>
+     		<input type="password" placeholder="Enter Password" name="password"><br><br>
+      		
+      		<input type="submit" name="Enter" value="Submit">
+    	</form>
+		-->
+		<form action="/login" method="post" enctype="multipart/form-data">
+			<label for="login">Enter your username: </label><br/>
+			<input id="login" type="text" name="uname"><br/>
+			
+			<label for="login">Password: </label><br/>
+			<input id="login" type="password" name="pword"><br/>
+		
+			<input type="submit" value="Submit">
+      
+      </form>
 	<p>If you do not have an account, click the button below.</p>
-    <button><a href="registration.html">Create an Account</a></button></div>
+    <button><a href="registration.html">Create an Account</a></button>
+    
+    </div>
 
 	<div class="extra"><p> Preview for those without accounts: </p>
 	
