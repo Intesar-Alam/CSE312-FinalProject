@@ -25,6 +25,9 @@ public class StatusUpdate {
 	 */
 	public StatusUpdate(String status, String username) {
 		STATUS = status; 
+		username = username.replace("&", "&amp");
+		username = username.replace("<", "&lt");
+		username = username.replace(">", "&gt");
 		USERNAME = username;
 		TIME = "" + new Date();
 	}
@@ -37,6 +40,9 @@ public class StatusUpdate {
 	 */
 	public StatusUpdate(String status, String username, String time) {
 		STATUS = status; 
+		username = username.replace("&", "&amp");
+		username = username.replace("<", "&lt");
+		username = username.replace(">", "&gt");
 		USERNAME = username;
 		TIME = time;
 	}

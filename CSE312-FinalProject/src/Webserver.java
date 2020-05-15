@@ -700,7 +700,7 @@ public class Webserver {
 			
 		// returns the posts in the home page
 		}else if(path.equals("/chat")){
-			output += STATUS200 + TEXTPLAN;// + NO_SNIFF;
+			output += STATUS200 + TEXTPLAN + NO_SNIFF;
 			String fileData = "";
 //			//Makes most recent post appear first
 //			ArrayList<StatusUpdate> reversedPost = publicPosts;
@@ -837,7 +837,7 @@ public class Webserver {
 			publicPosts.add(0, update);
 			userPost.put(update.getCSV(), false);
 			addToDocument(update, csvPost);
-			output += STATUS200 + TEXTPLAN;// + NO_SNIFF;
+			output += STATUS200 + TEXTPLAN + NO_SNIFF;
 			fileData = "";
 //			//Makes most recent post appear first
 //			ArrayList<StatusUpdate> reversedPost = publicPosts;

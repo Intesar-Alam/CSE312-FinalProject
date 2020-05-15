@@ -26,6 +26,7 @@ function downvote(x) {
 
 function sendMessageWithForm() {
 	const formElement = document.getElementById("myForm");
+	const formEl = document.getElementById("form-chat");
  	const formData = new FormData(formElement);
  	const request = new XMLHttpRequest();
  	var cht = document.getElementById("bdy");
@@ -33,6 +34,7 @@ function sendMessageWithForm() {
  	request.onreadystatechange = function(){
    	if(this.readyState	===	4	&&	this.status	===	200){
      	console.log(this.response);
+     	formEl.value = "";
     	 cht.innerHTML = this.response;
   	}
  	};
